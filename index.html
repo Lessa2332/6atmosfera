@@ -441,7 +441,7 @@
             font-size: 20px;
         }
 
-        /* Допоміжні кнопки */
+        /* Допоміжні кнопки — тепер тільки "Почати знову" */
         .fixed-buttons {
             position: fixed;
             bottom: 20px;
@@ -467,6 +467,22 @@
             }
             .progress-step {
                 font-size: 10px;
+            }
+        }
+
+        /* Друк сертифіката */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .certificate-container {
+                border: 5px solid gold;
+                box-shadow: none;
+                margin: 0;
             }
         }
     </style>
@@ -684,11 +700,8 @@
         <i class="fas fa-shield-alt"></i> Абетка безпеки ДСНС
     </a>
 
-    <!-- Кнопки допомоги (праворуч) -->
+    <!-- Кнопки допомоги (праворуч) — видалено кнопку підказки, залишено тільки "Почати знову" -->
     <div class="fixed-buttons no-print">
-        <button class="btn-secondary" onclick="showHint()" style="margin: 5px;">
-            <i class="fas fa-lightbulb"></i> Підказка
-        </button>
         <button class="btn-secondary" onclick="restartProject()" style="margin: 5px;">
             <i class="fas fa-redo"></i> Почати знову
         </button>
@@ -1017,7 +1030,7 @@
             }
         }
 
-        // ============ ДЕШИФРУВАННЯ (тепер з циклом до правильної відповіді) ============
+        // ============ ДЕШИФРУВАННЯ ============
         function openDecoder() {
             showScreen(3);
         }
@@ -1126,17 +1139,7 @@
         }
 
         // ============ ДОДАТКОВІ ФУНКЦІЇ ============
-        function showHint() {
-            const hints = [
-                "💡 Уважно читай теоретичну частину кожної місії.",
-                "💡 Град буває лише влітку, під час грози.",
-                "💡 Під час грози не можна ховатися під високими деревами.",
-                "💡 В ожеледицю ходи дрібними кроками, 'як пінгвін'.",
-                "💡 Зібрані символи мають скласти слово АГЕНТ."
-            ];
-            const randomHint = hints[Math.floor(Math.random() * hints.length)];
-            alert(randomHint);
-        }
+        // Функцію showHint() видалено за запитом користувача
 
         function restartProject() {
             if (confirm("Точно хочеш почати проєкт з початку? Весь прогрес буде втрачено.")) {
