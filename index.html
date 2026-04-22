@@ -417,6 +417,26 @@
             box-shadow: 0 0 20px var(--neon-green);
         }
 
+        /* Toast повідомлення */
+        #toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            z-index: 9999;
+            border-left: 6px solid var(--neon-green);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+            text-align: center;
+            max-width: 90%;
+            pointer-events: none;
+        }
+
         /* Фіксована кнопка ДСНС */
         .dsns-fixed-btn {
             position: fixed;
@@ -441,7 +461,7 @@
             font-size: 20px;
         }
 
-        /* Допоміжні кнопки — тепер тільки "Почати знову" */
+        /* Допоміжні кнопки */
         .fixed-buttons {
             position: fixed;
             bottom: 20px;
@@ -457,6 +477,17 @@
             padding: 10px 15px;
             font-size: 14px;
             margin: 0;
+        }
+
+        /* Блок балів */
+        .score-panel {
+            background: rgba(0, 255, 170, 0.2);
+            border: 2px solid var(--neon-green);
+            border-radius: 30px;
+            padding: 8px 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
         }
 
         @media (max-width: 480px) {
@@ -555,6 +586,11 @@
             <h2><i class="fas fa-tasks"></i> ОПЕРАТИВНІ МІСІЇ</h2>
             <p>Ваше завдання — зібрати 5 фрагментів коду, вивчивши правила безпеки під час різних небезпечних явищ. Кожна правильна відповідь відкриває частину коду.</p>
             
+            <!-- Бали -->
+            <div class="score-panel">
+                <i class="fas fa-star"></i> Бали: <span id="scoreValue">0</span> / <span id="maxScore">18</span>
+            </div>
+
             <div class="code-display" id="cipherDisplay">
                 <span id="codeChar1">⚫</span>
                 <span id="codeChar2">⚫</span>
@@ -695,12 +731,15 @@
         </div>
     </div>
 
+    <!-- Toast контейнер -->
+    <div id="toast-message" style="display: none;"></div>
+
     <!-- Кнопка ДСНС (ліворуч внизу) -->
-    <a href="https://dsns.gov.ua/abetka-bezpeki-1/nebezpeki-prirodnogo-xarakteru" target="_blank" class="dsns-fixed-btn" id="dsnsBtn" style="display: none;">
+    <a href="https://dsns.gov.ua/abetka-bezpeki-1/nebezpeki-prirodnogo-xarakteru" target="_blank" class="dsns-fixed-btn no-print" id="dsnsBtn" style="display: none;">
         <i class="fas fa-shield-alt"></i> Абетка безпеки ДСНС
     </a>
 
-    <!-- Кнопки допомоги (праворуч) — видалено кнопку підказки, залишено тільки "Почати знову" -->
+    <!-- Кнопки допомоги (праворуч) -->
     <div class="fixed-buttons no-print">
         <button class="btn-secondary" onclick="restartProject()" style="margin: 5px;">
             <i class="fas fa-redo"></i> Почати знову
@@ -788,8 +827,8 @@
                 }
             ],
             
-            finalCode: "АГЕНТ", // Код для доступу до дешифрування
-            secretMessage: "БЕЗПЕКА", // Розшифроване повідомлення
+            finalCode: "АГЕНТ",
+            secretMessage: "БЕЗПЕКА",
             
             scoring: {
                 correctAnswer: 2,
@@ -807,7 +846,8 @@
             collectedCode: ["_", "_", "_", "_", "_"],
             score: 0,
             startTime: null,
-            certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString()
+            certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString(),
+            decodingCompleted: false  // нове поле
         };
 
         // ============ ІНІЦІАЛІЗАЦІЯ ============
@@ -816,6 +856,8 @@
             loadProgress();
             renderMissions();
             updateProgressTracker();
+            updateScoreDisplay();
+            document.getElementById('maxScore').textContent = PROJECT_CONFIG.scoring.totalMax;
         });
 
         function initProject() {
@@ -834,15 +876,22 @@
             const saved = localStorage.getItem('safe_agent_progress');
             if (saved) {
                 try {
-                    gameState = JSON.parse(saved);
-                    updateCodeDisplay();
+                    const parsed = JSON.parse(saved);
+                    // Оновлюємо тільки існуючі поля, зберігаючи нові
+                    gameState = { ...gameState, ...parsed };
                     
-                    // Якщо всі місії пройдені - показати кнопку дешифратора
+                    // Якщо немає поля decodingCompleted, додаємо
+                    if (gameState.decodingCompleted === undefined) {
+                        gameState.decodingCompleted = false;
+                    }
+                    
+                    updateCodeDisplay();
+                    updateScoreDisplay();
+                    
                     if (gameState.completedMissions.length === PROJECT_CONFIG.missions.length) {
                         document.getElementById('decoderBtn').style.display = 'block';
                     }
                     
-                    // Якщо ім'я вже є, показуємо його в полі
                     if (gameState.agentName) {
                         document.getElementById('agentName').value = gameState.agentName;
                     }
@@ -856,6 +905,22 @@
             localStorage.setItem('safe_agent_progress', JSON.stringify(gameState));
         }
 
+        // ============ TOAST ПОВІДОМЛЕННЯ ============
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            toast.style.borderLeftColor = isSuccess ? 'var(--neon-green)' : '#ff5555';
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
+            }, 2500);
+        }
+
         // ============ ЕКРАНИ ТА НАВІГАЦІЯ ============
         function showScreen(screenNumber) {
             document.querySelectorAll('.game-screen').forEach(screen => {
@@ -866,6 +931,21 @@
             gameState.currentScreen = screenNumber;
             
             updateProgressTracker();
+            
+            if (screenNumber === 3) {
+                // Якщо дешифрування вже виконано, показуємо результат
+                if (gameState.decodingCompleted) {
+                    document.getElementById('decodeResult').textContent = PROJECT_CONFIG.secretMessage;
+                    document.getElementById('decodingMessage').innerHTML = `
+                        <p style="color: var(--neon-green); font-size: 24px;">
+                            <i class="fas fa-check-circle"></i> ДЕШИФРУВАНО!
+                        </p>
+                        <p>Секретне повідомлення: <strong>${PROJECT_CONFIG.secretMessage}</strong></p>
+                        <p>Ти став справжнім агентом безпеки!</p>
+                    `;
+                    document.getElementById('certificateBtn').style.display = 'block';
+                }
+            }
             
             if (screenNumber === 4) {
                 loadCertificateData();
@@ -885,11 +965,15 @@
             });
         }
 
+        function updateScoreDisplay() {
+            document.getElementById('scoreValue').textContent = gameState.score;
+        }
+
         // ============ СКАНУВАННЯ ============
         function startBioScan() {
             const nameInput = document.getElementById('agentName').value.trim();
             if (!nameInput) {
-                alert("Агенте, спочатку введіть своє ім'я!");
+                showToast("Агенте, спочатку введіть своє ім'я!", false);
                 return;
             }
             
@@ -908,6 +992,7 @@
                 `;
                 document.getElementById('startMissionBtn').style.display = 'block';
                 saveProgress();
+                showToast("Ідентифікацію успішно пройдено!");
             }, 2000);
         }
 
@@ -946,7 +1031,7 @@
             if (!mission) return;
             
             if (gameState.completedMissions.includes(missionId)) {
-                alert("✅ Цю місію вже виконано! Символ отримано.");
+                showToast("Цю місію вже виконано! Символ отримано.", true);
                 return;
             }
             
@@ -992,6 +1077,7 @@
                     gameState.score += PROJECT_CONFIG.scoring.correctAnswer;
                     
                     updateCodeDisplay();
+                    updateScoreDisplay();
                     renderMissions();
                     saveProgress();
                     
@@ -1003,13 +1089,16 @@
                         if (timeSpent < 15) {
                             gameState.score += PROJECT_CONFIG.scoring.timeBonus;
                         }
+                        updateScoreDisplay();
+                        saveProgress();
+                        showToast(`Вітаю! Всі місії виконано! +${PROJECT_CONFIG.scoring.allMissionsBonus} балів!`, true);
                     }
                     
-                    alert(`✅ ВІРНО!\nОтримано символ: ${mission.codeChar}`);
+                    showToast(`Правильно! Отримано символ: ${mission.codeChar} +2 бали`, true);
                 }
                 closeMission();
             } else {
-                alert("❌ ПОМИЛКА! Спробуй ще раз, уважно прочитай теоретичну частину.");
+                showToast("Помилка! Спробуй ще раз, уважно прочитай теоретичну частину.", false);
             }
         }
 
@@ -1039,17 +1128,15 @@
             const inputCode = document.getElementById('finalCode').value.toUpperCase().trim();
             
             if (inputCode.length !== 5) {
-                alert("Код має містити рівно 5 символів!");
+                showToast("Код має містити рівно 5 символів!", false);
                 return;
             }
             
-            // Якщо код невірний — не пускаємо далі, просимо спробувати знову
             if (inputCode !== PROJECT_CONFIG.finalCode) {
-                alert("❌ КОД НЕВІРНИЙ! Спробуйте ще раз. Підказка: це слово з 5 літер, яке означає вас — АГЕНТ.");
-                return; // Виходимо, кнопка сертифіката не з'явиться
+                showToast("Код невірний! Спробуйте ще раз. Підказка: це слово з 5 літер, яке означає вас — АГЕНТ.", false);
+                return;
             }
             
-            // Якщо код правильний — запускаємо анімацію
             const decodeResult = document.getElementById('decodeResult');
             const decodeMessage = document.getElementById('decodingMessage');
             
@@ -1077,6 +1164,9 @@
                     `;
                     
                     document.getElementById('certificateBtn').style.display = 'block';
+                    gameState.decodingCompleted = true;
+                    saveProgress();
+                    showToast("Дешифрування успішне! Тепер можна отримати сертифікат.", true);
                 }
             }, 300);
         }
@@ -1087,7 +1177,8 @@
         }
 
         function loadCertificateData() {
-            document.getElementById('certName').textContent = gameState.agentName ? gameState.agentName.toUpperCase() : "[ІМ'Я АГЕНТА]";
+            const name = gameState.agentName?.trim() || "Агент";
+            document.getElementById('certName').textContent = name.toUpperCase();
             document.getElementById('certNumber').textContent = gameState.certificateNumber;
             
             const now = new Date();
@@ -1104,8 +1195,20 @@
         }
 
         function shareCertificate() {
-            const text = `Я, ${gameState.agentName}, став(ла) агентом безпеки ДСНС України! Пройшов(ла) курс "Атмосферні опади: небезпечні явища" та отримав(ла) сертифікат №${gameState.certificateNumber}. Будьте безпечні!`;
-            alert(`Поділися цим текстом:\n\n${text}\n\nСкопіюй та встав у соцмережі!`);
+            const text = `Я, ${gameState.agentName || 'Агент'}, став(ла) агентом безпеки ДСНС України! Пройшов(ла) курс "Атмосферні опади: небезпечні явища" та отримав(ла) сертифікат №${gameState.certificateNumber}. Будьте безпечні!`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Сертифікат агента безпеки',
+                    text: text,
+                    url: window.location.href
+                }).catch(() => {
+                    // fallback
+                    prompt('Скопіюйте текст для поширення:', text);
+                });
+            } else {
+                prompt('Скопіюйте текст для поширення:', text);
+            }
         }
 
         // ============ ЗАВЕРШЕННЯ ПРОЄКТУ ============
@@ -1131,20 +1234,21 @@
                 Бажаємо безпечних подорожей!
             `;
             
-            alert(message);
-            
-            if (confirm("Повернутися на головну сторінку?")) {
-                window.location.href = 'index.html';
-            }
+            showToast("Проєкт завершено! Вітаємо!", true);
+            setTimeout(() => {
+                alert(message);
+                // Повертаємо до початку, замість переходу на index.html
+                restartProject();
+            }, 500);
         }
 
-        // ============ ДОДАТКОВІ ФУНКЦІЇ ============
-        // Функцію showHint() видалено за запитом користувача
-
+        // ============ РЕСТАРТ ============
         function restartProject() {
             if (confirm("Точно хочеш почати проєкт з початку? Весь прогрес буде втрачено.")) {
                 localStorage.removeItem('safe_agent_progress');
                 localStorage.removeItem('project_completed');
+                
+                // Скидання gameState
                 gameState = {
                     agentName: "",
                     currentScreen: 1,
@@ -1152,16 +1256,29 @@
                     collectedCode: ["_", "_", "_", "_", "_"],
                     score: 0,
                     startTime: Date.now(),
-                    certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString()
+                    certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString(),
+                    decodingCompleted: false
                 };
+                
+                // Скидання UI першого екрану
                 document.getElementById('agentName').value = '';
                 document.getElementById('startMissionBtn').style.display = 'none';
                 document.getElementById('scanStatus').innerHTML = '<p><i class="fas fa-clock"></i> Очікування сканування...</p>';
                 document.getElementById('fingerIcon').style.opacity = '0.3';
+                
+                // Скидання дешифратора
+                document.getElementById('finalCode').value = '';
+                document.getElementById('decodeResult').textContent = '';
+                document.getElementById('decodingMessage').innerHTML = '';
+                document.getElementById('certificateBtn').style.display = 'none';
+                
                 renderMissions();
                 updateCodeDisplay();
+                updateScoreDisplay();
                 showScreen(1);
                 document.getElementById('dsnsBtn').style.display = 'none';
+                
+                showToast("Прогрес скинуто. Почнімо знову!", true);
             }
         }
     </script>
