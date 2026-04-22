@@ -21,7 +21,6 @@
             min-height: 100vh;
         }
 
-        /* Головний контейнер */
         .game-wrapper {
             max-width: 550px;
             margin: 0 auto;
@@ -33,7 +32,6 @@
             border: 3px solid #ffdd99;
         }
 
-        /* Шапка з хробаком */
         .game-header {
             background: #6b3e1c;
             padding: 20px 15px 15px;
@@ -76,7 +74,6 @@
             text-shadow: 3px 3px 0 #9b5e2c;
         }
 
-        /* Прогрес-трекер (веселий) */
         .progress-fun {
             display: flex;
             background: #f3d382;
@@ -100,7 +97,6 @@
             box-shadow: 0 0 0 3px #ffeaab;
         }
 
-        /* Екрани */
         .screen {
             display: none;
             padding: 20px;
@@ -115,7 +111,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Кнопки-цукерки */
         .candy-btn {
             background: linear-gradient(135deg, #ffb347, #ff8c1a);
             border: none;
@@ -140,7 +135,6 @@
             font-size: 1rem;
         }
 
-        /* Сканер ґрунту */
         .soil-scanner {
             background: #e5c48a;
             border-radius: 50px;
@@ -164,7 +158,6 @@
         }
         .dig-area:active { transform: scale(0.96); }
 
-        /* Місії (картки) */
         .missions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
@@ -196,7 +189,6 @@
             margin-top: 8px;
         }
 
-        /* Кодовий дисплей */
         .code-display {
             background: #2e241f;
             border-radius: 60px;
@@ -209,7 +201,6 @@
             margin: 15px 0;
         }
 
-        /* Свайп-панель (горизонти) */
         .swipe-card {
             background: #fffaec;
             border-radius: 35px;
@@ -232,7 +223,6 @@
             border-left: 12px solid #d9942c;
         }
 
-        /* Бали та таймер */
         .stats {
             display: flex;
             justify-content: space-between;
@@ -252,7 +242,6 @@
             font-size: 1.2rem;
         }
 
-        /* Сертифікат */
         .certificate {
             background: #fef9e6;
             border-radius: 35px;
@@ -274,7 +263,6 @@
         <div style="font-size:0.8rem;">Пригоди в підземеллі родючості</div>
     </div>
 
-    <!-- Прогрес -->
     <div class="progress-fun">
         <div class="step-badge active" data-step="1">🆔 1. Хто ти?</div>
         <div class="step-badge" data-step="2">🕵️ 2. Місії</div>
@@ -356,7 +344,7 @@
         { id: 4, title: "🛡️ Захист ґрунту", icon: "🌳", theory: "Щоб ґрунт не зникав, садять лісосмуги, сіють різні рослини по черзі.", question: "Що допомагає боротися з вітровою ерозією?", options: ["Лісосмуги", "Спалювання листя", "Багато води"], correct: 0, codeChar: "Н" },
         { id: 5, title: "🇺🇦 Чорноземи України", icon: "🌻", theory: "Українські чорноземи – найродючіші у світі! Докучаєв їх досліджував.", question: "Який ґрунт найкращий у світі?", options: ["Піщаний", "Чорнозем", "Болотний"], correct: 1, codeChar: "Т" }
     ];
-    const FINAL_CODE = "ГРУНТ";
+    const FINAL_CODE = "ГРУНТ";   // правильний код із зібраних символів
     const SECRET_WORD = "РОДЮЧІСТЬ";
 
     let game = {
@@ -370,7 +358,6 @@
         certNumber: Math.floor(Math.random()*9000+1000)
     };
 
-    // DOM елементи
     let currentScreen = 1;
     function showScreen(n) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -388,11 +375,9 @@
     }
 
     function updateUI() {
-        // оновити код-дисплей
         let codeDiv = document.getElementById('codeDisplay');
         if(codeDiv) codeDiv.innerText = game.collected.join('');
         document.getElementById('scoreSpan').innerText = game.score;
-        // перемалювати місії
         renderMissions();
         if(game.completed.every(v=>v===true)) {
             document.getElementById('openDecoderBtn').style.display = 'block';
@@ -516,7 +501,7 @@
             updateUI();
             if(game.completed.every(v=>v===true)) document.getElementById('openDecoderBtn').style.display = 'block';
             if(game.decoderUnlocked) showScreen(3);
-            else showScreen(2);
+            else if(game.name) showScreen(2);
         }
     }
 
@@ -549,19 +534,32 @@
         showScreen(3);
     });
 
-    document.getElementById('decodeBtn')?.addEventListener('click', () => {
-        let code = document.getElementById('codeInput').value.toUpperCase().trim();
-        if(code !== FINAL_CODE) {
-            showToast("Неправильний код! Збери всі літери з місій: Ґ, Р, У, Н, Т", false);
-            return;
-        }
-        // конфетті
-        canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-        document.getElementById('decodingResult').innerHTML = `🔓 Розшифровано! Секретне слово: <span style="color:#b45116;">${SECRET_WORD}</span> 🎉`;
-        document.getElementById('showCertBtn').style.display = 'block';
-        game.decoderUnlocked = true;
-        saveGame();
-    });
+    // ВИПРАВЛЕНА КНОПКА ДЕШИФРУВАННЯ (працює 100%)
+    const decodeBtn = document.getElementById('decodeBtn');
+    if (decodeBtn) {
+        decodeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            let inputField = document.getElementById('codeInput');
+            let code = inputField.value.trim().toUpperCase();
+            // Додатково: якщо користувач випадково ввів "ҐРУНТ" (з українською Ґ) – замінимо на Г
+            code = code.replace(/Ґ/, 'Г');
+            
+            if (code !== FINAL_CODE) {
+                showToast(`Неправильний код! Ти зібрав: ${game.collected.join('')}. Має бути: Г, Р, У, Н, Т`, false);
+                return;
+            }
+            
+            // Успіх!
+            canvasConfetti({ particleCount: 250, spread: 80, origin: { y: 0.6 } });
+            document.getElementById('decodingResult').innerHTML = `🔓 Розшифровано! Секретне слово: <span style="color:#b45116;">${SECRET_WORD}</span> 🎉`;
+            document.getElementById('showCertBtn').style.display = 'block';
+            game.decoderUnlocked = true;
+            saveGame();
+            showToast("Код правильний! Ти отримав секретне слово!", true);
+        });
+    } else {
+        console.error("Кнопка decodeBtn не знайдена!");
+    }
 
     document.getElementById('showCertBtn')?.addEventListener('click', () => {
         showScreen(4);
@@ -576,7 +574,7 @@
             link.href = canvas.toDataURL();
             link.click();
             showToast("Сертифікат збережено! 🖼️");
-        });
+        }).catch(err => showToast("Помилка збереження", false));
     });
 
     document.getElementById('finishGameBtn')?.addEventListener('click', () => {
