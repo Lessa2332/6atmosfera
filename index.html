@@ -2,1168 +2,589 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Проєкт: Агент Безпеки | Атмосферні опади</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🌍 Terra Link — кругообіг оболонок</title>
     <style>
         * {
             box-sizing: border-box;
-        }
-
-        :root {
-            --neon-green: #00ffaa;
-            --neon-blue: #00ffff;
-            --matrix-green: #39ff14;
-            --dark-bg: #0a0a0a;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-orange: #ff9500;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0f172a, #1a0b2e);
-            color: white;
-            font-family: 'Nunito', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
             margin: 0;
-            padding: 10px;
+            padding: 0;
+        }
+        body {
+            margin: 0;
             min-height: 100vh;
-            font-size: 16px;
-        }
-
-        .container {
-            max-width: 100%;
-            width: 100%;
-            margin: 0 auto;
-            padding: 10px;
-        }
-
-        /* Навігація проєкту */
-        .project-header {
-            text-align: center;
-            padding: 20px 15px;
-            background: rgba(0, 255, 255, 0.1);
-            border-radius: 20px;
-            border: 2px solid var(--neon-blue);
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .project-title {
-            font-size: clamp(24px, 8vw, 42px);
-            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        .project-subtitle {
-            font-size: clamp(14px, 4vw, 20px);
-            opacity: 0.9;
-            margin-bottom: 15px;
-        }
-
-        .project-badge {
-            display: inline-block;
-            background: linear-gradient(45deg, #ff4081, #c77dff);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 50px;
-            font-weight: 900;
-            margin: 5px;
-            font-size: 14px;
-        }
-
-        /* Екрани гри */
-        .game-screen {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .game-screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Сканнер */
-        .scanner-container {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            padding: 25px 20px;
-            border: 3px solid var(--neon-green);
-            position: relative;
-            overflow: hidden;
-            margin: 20px auto;
-            max-width: 100%;
-            width: 100%;
-        }
-
-        .scanner-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(transparent, var(--neon-blue), transparent 30%);
-            animation: rotate 4s linear infinite;
-        }
-
-        .scanner-container > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
-        .fingerprint-scanner {
-            width: 150px;
-            height: 180px;
-            border: 3px dashed var(--neon-green);
-            border-radius: 50%;
-            margin: 20px auto;
-            position: relative;
-            cursor: pointer;
+            background: #1a3a2c;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 255, 170, 0.05);
-            transition: all 0.3s;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            touch-action: pan-y; 
         }
-
-        .fingerprint-scanner:hover {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+        .game-wrapper {
+            background: #e3d6b5;
+            border-radius: 48px 48px 36px 36px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.4), inset 0 2px 8px #fbf3df;
+            padding: 18px 18px 30px;
+            max-width: 550px;
+            width: 96%;
+            margin: 16px auto;
+            border: 3px solid #8b7a5a;
         }
-
-        .fingerprint-icon {
-            font-size: 60px;
-            color: var(--neon-green);
-            opacity: 0.3;
-            transition: opacity 0.5s;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 10%;
-            width: 80%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
-            box-shadow: 0 0 20px var(--neon-green);
-            display: none;
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
-
-        /* Місії */
-        .missions-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .mission-card {
-            background: var(--card-bg);
-            border: 2px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mission-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
-        }
-
-        .mission-card.completed {
-            border-color: gold;
-            background: rgba(255, 215, 0, 0.1);
-        }
-
-        .mission-card.completed::after {
-            content: '✓';
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            color: gold;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .mission-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-            color: var(--neon-blue);
-        }
-
-        .mission-code {
-            position: absolute;
-            bottom: 10px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--matrix-green);
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            font-size: 22px;
-            border: 1px solid var(--matrix-green);
-        }
-
-        /* Інтерактивна вправа */
-        .quiz-container {
-            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(0, 255, 255, 0.05));
-            border-radius: 20px;
-            padding: 20px;
-            border: 2px solid var(--accent-orange);
-            margin: 20px 0;
-        }
-
-        .weather-simulation {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 15px 0;
-            border-left: 4px solid var(--neon-blue);
-            font-size: 15px;
-        }
-
-        /* Шифрувальник */
-        .decoder-interface {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid var(--matrix-green);
-            border-radius: 20px;
-            padding: 25px 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-
-        .code-display {
-            font-size: clamp(32px, 10vw, 48px);
-            letter-spacing: 10px;
+        h1 {
             text-align: center;
-            color: var(--matrix-green);
-            margin: 20px 0;
-            text-shadow: 0 0 10px var(--matrix-green);
-            min-height: 60px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            border: 1px solid rgba(57, 255, 20, 0.3);
-            word-break: break-word;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: #1f4f2b;
+            text-shadow: 3px 3px 0 #b9aa83;
+            margin: 0 0 6px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-
-        /* Сертифікат */
-        .certificate-container {
-            background: white;
-            color: black;
-            border: 10px solid gold;
-            padding: 25px 15px;
-            border-radius: 5px;
-            text-align: center;
-            margin: 20px auto;
-            max-width: 100%;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
+        h1 span {
+            background: #2f6b3a;
+            color: #fef7e7;
+            font-size: 1.2rem;
+            padding: 5px 18px;
+            border-radius: 40px;
+            box-shadow: inset 0 1px 4px #c2b08b, 0 4px 0 #1b3a1b;
         }
-
-        .certificate-container::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid #8B4513;
-            pointer-events: none;
+        canvas {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
+            background: #aac0a2;
+            border-radius: 36px;
+            box-shadow: inset 0 0 0 5px #736b4b, inset 0 8px 12px rgba(0,0,0,0.08), 0 10px 0 #4d5e3f;
+            border: 2px solid #efdfbe;
+            touch-action: none;
+            cursor: crosshair;
         }
-
-        .certificate-logo {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-
-        .certificate-title {
-            font-size: clamp(24px, 6vw, 36px);
-            color: #8B4513;
-            margin-bottom: 10px;
-            font-weight: 900;
-        }
-
-        .certificate-subtitle {
-            font-size: clamp(14px, 4vw, 20px);
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .certificate-name {
-            font-size: clamp(28px, 7vw, 48px);
-            color: #1a0b2e;
-            margin: 20px 0;
-            padding: 15px 10px;
-            border-top: 3px double gold;
-            border-bottom: 3px double gold;
-            word-break: break-word;
-        }
-
-        /* Прогрес */
-        .progress-tracker {
+        .info-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 0;
-            padding: 15px 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            gap: 5px;
+            margin: 20px 6px 12px;
+            background: #cdbc95;
+            padding: 12px 18px;
+            border-radius: 50px;
+            box-shadow: inset 0 2px 6px #9e8e6c, 0 6px 0 #6b5b3e;
+            color: #1d351d;
+            font-weight: bold;
         }
-
-        .progress-step {
-            text-align: center;
-            flex: 1;
-            position: relative;
-            font-size: 12px;
+        .level-box, .links-box {
+            background: #f3ebd2;
+            padding: 6px 20px;
+            border-radius: 40px;
+            box-shadow: inset 0 1px 5px #9b8a66, 0 3px 0 #5a4d34;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
         }
-
-        .progress-step.active .step-number {
-            background: var(--neon-green);
-            color: black;
-            box-shadow: 0 0 20px var(--neon-green);
+        .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1d5c1d;
+            line-height: 1;
         }
-
-        .step-number {
-            width: 32px;
-            height: 32px;
-            background: #333;
-            border-radius: 50%;
+        button {
+            background: #5c8a56;
+            border: none;
+            color: #fdf6e3;
+            font-weight: bold;
+            font-size: 1.4rem;
+            padding: 10px 28px;
+            border-radius: 60px;
+            box-shadow: 0 6px 0 #2a4f2a, 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.06s;
+            border: 2px solid #ebdaaf;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #2a4f2a, 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .goal-area {
+            background: #dbceaa;
+            border-radius: 30px;
+            padding: 14px 18px;
+            margin-top: 14px;
+            box-shadow: inset 0 2px 5px #a3926f, 0 4px 0 #746442;
+            font-weight: 600;
+            color: #1e3d1e;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 5px;
-            font-weight: 900;
-            transition: all 0.3s;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
-            color: black;
-            font-weight: 900;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 15px 20px;
-            font-size: 18px;
-            width: 100%;
-            max-width: 300px;
-            margin: 10px auto;
-            display: block;
-        }
-
-        .btn-primary:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 20px var(--neon-blue);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--neon-blue);
-            color: white;
+        .goal-text {
+            background: #fbf2da;
+            padding: 5px 20px;
             border-radius: 30px;
-            padding: 12px 18px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 16px;
-            width: 100%;
-            margin: 5px 0;
+            box-shadow: inset 0 1px 3px #7f6e4e;
         }
-
-        .btn-secondary:hover {
-            background: var(--neon-blue);
-            color: black;
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            margin: 12px 4px 0;
+            color: #2d4522;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 15px;
-            border: 2px solid var(--neon-blue);
-            background: rgba(255,255,255,0.1);
-            color: white;
+        .legend span::before {
+            content: "●";
+            margin-right: 6px;
+            font-size: 1.5rem;
+            vertical-align: middle;
+        }
+        .footer-note {
+            color: #49633e;
             text-align: center;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--neon-green);
-            box-shadow: 0 0 20px var(--neon-green);
-        }
-
-        /* Фіксована кнопка ДСНС */
-        .dsns-fixed-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 999;
-            background: #ffd700;
-            color: #0f172a;
-            padding: 12px 18px;
-            border-radius: 50px;
-            font-weight: 900;
-            text-decoration: none;
-            box-shadow: 0 0 20px #ffd700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            border: 2px solid white;
-        }
-
-        .dsns-fixed-btn i {
-            font-size: 20px;
-        }
-
-        /* Допоміжні кнопки — тепер тільки "Почати знову" */
-        .fixed-buttons {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .fixed-buttons .btn-secondary {
-            width: auto;
-            padding: 10px 15px;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        @media (max-width: 480px) {
-            .step-number {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-            .progress-step {
-                font-size: 10px;
-            }
-        }
-
-        /* Друк сертифіката */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .certificate-container {
-                border: 5px solid gold;
-                box-shadow: none;
-                margin: 0;
-            }
+            margin-top: 12px;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Заголовок проєкту -->
-        <header class="project-header">
-            <h1 class="project-title">🌪️ АГЕНТ БЕЗПЕКИ: АТМОСФЕРНІ ОПАДИ</h1>
-            <p class="project-subtitle">Фінальна місія: навчальний проєкт з безпеки</p>
-            <div>
-                <span class="project-badge">ДСНС України</span>
-                <span class="project-badge">6 клас НУШ</span>
-                <span class="project-badge">Стихійні явища</span>
-            </div>
-        </header>
-
-        <!-- Трекер прогресу -->
-        <div class="progress-tracker">
-            <div class="progress-step active">
-                <div class="step-number">1</div>
-                <div>Ідентифікація</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-number">2</div>
-                <div>Місії</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-number">3</div>
-                <div>Шифрування</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-number">4</div>
-                <div>Сертифікат</div>
-            </div>
+<div class="game-wrapper">
+    <h1>🌐 TERRA LINK <span>кругообіг</span></h1>
+    <canvas id="terraCanvas" width="600" height="600"></canvas>
+    
+    <div class="info-panel">
+        <div class="level-box">
+            <span>🌱 рівень</span>
+            <span class="value" id="levelDisplay">1</span>
         </div>
-
-        <!-- Екран 1: Ідентифікація -->
-        <div id="screen1" class="game-screen active">
-            <h2><i class="fas fa-fingerprint"></i> ІДЕНТИФІКАЦІЯ АГЕНТА</h2>
-            <p>Вітаємо в Центрі підготовки агентів безпеки ДСНС України. Для доступу до місії необхідно пройти ідентифікацію.</p>
-            
-            <div style="max-width: 100%; margin: 20px auto;">
-                <input type="text" id="agentName" class="input-field" placeholder="Введіть своє повне ім'я">
-            </div>
-
-            <div class="scanner-container">
-                <h3><i class="fas fa-qrcode"></i> СКАНУВАННЯ БІОМЕТРІЇ</h3>
-                <p>Натисніть на сканер для перевірки відбитка</p>
-                
-                <div class="fingerprint-scanner" onclick="startBioScan()">
-                    <i class="fas fa-fingerprint fingerprint-icon" id="fingerIcon"></i>
-                    <div class="scan-line" id="scanLine"></div>
-                </div>
-                
-                <div id="scanStatus" style="text-align: center; margin-top: 20px; min-height: 40px;">
-                    <p><i class="fas fa-clock"></i> Очікування сканування...</p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="startMissionBtn" class="btn-primary" style="display: none;" onclick="startMission()">
-                    <i class="fas fa-play-circle"></i> ПОЧАТИ МІСІЮ
-                </button>
-            </div>
-        </div>
-
-        <!-- Екран 2: Місії -->
-        <div id="screen2" class="game-screen">
-            <h2><i class="fas fa-tasks"></i> ОПЕРАТИВНІ МІСІЇ</h2>
-            <p>Ваше завдання — зібрати 5 фрагментів коду, вивчивши правила безпеки під час різних небезпечних явищ. Кожна правильна відповідь відкриває частину коду.</p>
-            
-            <div class="code-display" id="cipherDisplay">
-                <span id="codeChar1">⚫</span>
-                <span id="codeChar2">⚫</span>
-                <span id="codeChar3">⚫</span>
-                <span id="codeChar4">⚫</span>
-                <span id="codeChar5">⚫</span>
-            </div>
-
-            <div class="missions-grid" id="missionsContainer">
-                <!-- Місії генеруються через JavaScript -->
-            </div>
-
-            <div id="missionDetail" style="display: none;">
-                <div class="quiz-container">
-                    <h3 id="missionTitle"></h3>
-                    <div class="weather-simulation">
-                        <h4><i class="fas fa-info-circle"></i> ТЕОРЕТИЧНА ЧАСТИНА</h4>
-                        <p id="missionTheory"></p>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <h4><i class="fas fa-question-circle"></i> ПРАКТИЧНЕ ЗАВДАННЯ</h4>
-                        <p id="missionQuestion"></p>
-                        <div id="missionOptions" style="display: grid; gap: 10px; margin: 20px 0;"></div>
-                    </div>
-                    
-                    <button class="btn-secondary" onclick="closeMission()">
-                        <i class="fas fa-arrow-left"></i> Повернутися до місій
-                    </button>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="decoderBtn" class="btn-primary" style="display: none;" onclick="openDecoder()">
-                    <i class="fas fa-key"></i> ВІДКРИТИ ДЕШИФРАТОР
-                </button>
-            </div>
-        </div>
-
-        <!-- Екран 3: Дешифрування -->
-        <div id="screen3" class="game-screen">
-            <h2><i class="fas fa-lock"></i> КВАНТОВИЙ ДЕШИФРАТОР</h2>
-            <p>Введіть отриманий код з 5 символів для розшифровки секретного повідомлення</p>
-            
-            <div class="decoder-interface">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <input type="text" id="finalCode" maxlength="5" placeholder="5 символів" class="input-field" style="letter-spacing: 5px; font-family: 'Courier New', monospace; text-transform: uppercase;">
-                </div>
-                
-                <div style="text-align: center;">
-                    <button class="btn-primary" onclick="startDecoding()" style="padding: 15px 20px;">
-                        <i class="fas fa-bolt"></i> ЗАПУСТИТИ ДЕШИФРУВАННЯ
-                    </button>
-                </div>
-                
-                <div id="decodingAnimation" style="text-align: center; margin-top: 30px; min-height: 100px;">
-                    <div id="decodeResult" class="code-display"></div>
-                </div>
-                
-                <div id="decodingMessage" style="text-align: center; margin-top: 20px; font-size: 18px; color: var(--neon-blue);"></div>
-            </div>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <button id="certificateBtn" class="btn-primary" style="display: none;" onclick="showCertificate()">
-                    <i class="fas fa-award"></i> ОТРИМАТИ СЕРТИФІКАТ
-                </button>
-            </div>
-        </div>
-
-        <!-- Екран 4: Сертифікат -->
-        <div id="screen4" class="game-screen">
-            <div class="certificate-container">
-                <div class="certificate-logo">🎖️</div>
-                <h1 class="certificate-title">СЕРТИФІКАТ БЕЗПЕКИ</h1>
-                <p class="certificate-subtitle">Державна служба України з надзвичайних ситуацій</p>
-                
-                <hr style="border: 2px solid gold; width: 80%; margin: 20px auto;">
-                
-                <p>Цим сертифікатом засвідчується, що</p>
-                <h2 class="certificate-name" id="certName">[ІМ'Я АГЕНТА]</h2>
-                <p>успішно пройшов(ла) курс підготовки</p>
-                <h3 style="color: #1a0b2e; margin: 20px 0;">"БЕЗПЕКА ПІД ЧАС НЕБЕЗПЕЧНИХ АТМОСФЕРНИХ ЯВИЩ"</h3>
-                
-                <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin: 30px 0;">
-                    <div>
-                        <h4>ОСВОЄНІ ТЕМИ:</h4>
-                        <ul style="text-align: left; padding-left: 20px;">
-                            <li>Град: утворення та небезпека</li>
-                            <li>Гроза: блискавки та грім</li>
-                            <li>Ожеледь та ожеледиця</li>
-                            <li>Хуртовина</li>
-                            <li>Туман та обмежена видимість</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>НАБУТІ НАВИЧКИ:</h4>
-                        <ul style="text-align: left; padding-left: 20px;">
-                            <li>Аналіз погодних умов</li>
-                            <li>Правила безпечної поведінки</li>
-                            <li>Прийняття рішень у небезпеці</li>
-                            <li>Командна робота</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <hr style="border: 1px solid #ccc; width: 80%; margin: 20px auto;">
-                
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 15px; margin-top: 30px;">
-                    <div>
-                        <p>Дата видачі</p>
-                        <h4 id="certDate">07.02.2026</h4>
-                    </div>
-                    <div>
-                        <p>Ідентифікатор</p>
-                        <h4 id="certId">ATMOS-#<span id="certNumber">0001</span></h4>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                    <button class="btn-primary no-print" onclick="printCertificate()" style="margin: 10px auto;">
-                        <i class="fas fa-print"></i> ДРУКУВАТИ СЕРТИФІКАТ
-                    </button>
-                    <button class="btn-secondary no-print" onclick="finishProject()" style="margin: 10px auto;">
-                        <i class="fas fa-trophy"></i> ЗАВЕРШИТИ ПРОЄКТ
-                    </button>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;" class="no-print">
-                <p><i class="fas fa-share-alt"></i> Поділися своїм досягненням з друзями!</p>
-                <button class="btn-secondary" onclick="shareCertificate()" style="margin: 5px; width: auto; display: inline-block;">
-                    <i class="fab fa-facebook"></i> Facebook
-                </button>
-                <button class="btn-secondary" onclick="shareCertificate()" style="margin: 5px; width: auto; display: inline-block;">
-                    <i class="fab fa-instagram"></i> Instagram
-                </button>
-            </div>
+        <button id="resetBtn">↻ заново</button>
+        <div class="links-box">
+            <span>🔗 ланки</span>
+            <span class="value" id="linksCount">0/3</span>
         </div>
     </div>
 
-    <!-- Кнопка ДСНС (ліворуч внизу) -->
-    <a href="https://dsns.gov.ua/abetka-bezpeki-1/nebezpeki-prirodnogo-xarakteru" target="_blank" class="dsns-fixed-btn" id="dsnsBtn" style="display: none;">
-        <i class="fas fa-shield-alt"></i> Абетка безпеки ДСНС
-    </a>
-
-    <!-- Кнопки допомоги (праворуч) — видалено кнопку підказки, залишено тільки "Почати знову" -->
-    <div class="fixed-buttons no-print">
-        <button class="btn-secondary" onclick="restartProject()" style="margin: 5px;">
-            <i class="fas fa-redo"></i> Почати знову
-        </button>
+    <div class="goal-area">
+        <span>🎯 завдання:</span>
+        <span class="goal-text" id="goalDescription">💧 → 🌬️ (випаровування)</span>
     </div>
 
-    <script>
-        // ============ КОНФІГУРАЦІЯ ПРОЄКТУ ============
-        const PROJECT_CONFIG = {
-            missions: [
-                {
-                    id: "hail",
-                    title: "ГРАДОВА АТАКА",
-                    icon: "⛈️",
-                    theory: "Град — це щільні шаруваті кульки льоду розміром від горошини до голубиного яйця. Він буває лише влітку під час сильних гроз, коли верхівки хмар піднімаються на велику висоту (мал. 199). Град може вкривати землю шаром 20-30 см, знищувати посіви та пошкоджувати будівлі.",
-                    question: "Що найбезпечніше робити під час сильного граду?",
-                    options: [
-                        "Швидко бігти додому, прикриваючи голову сумкою",
-                        "Сховатися під міцним дахом або в будівлі",
-                        "Стояти під високим деревом, щоб захиститися"
-                    ],
-                    correct: 1,
-                    codeChar: "А",
-                    color: "#FF9500"
-                },
-                {
-                    id: "thunder",
-                    title: "ГРОЗОВА ТРИВОГА",
-                    icon: "⚡",
-                    theory: "Гроза часто супроводжується градом та сильним вітром. Блискавка — це електричний розряд, який може вдарити у високі предмети. Град утворюється в грозових хмарах, коли краплі води багаторазово піднімаються вгору і замерзають (мал. 199).",
-                    question: "Що категорично НЕ МОЖНА робити під час грози?",
-                    options: [
-                        "Вимкнути електроприлади з розетки",
-                        "Ховатися під високим деревом",
-                        "Залишатися в автомобілі"
-                    ],
-                    correct: 1,
-                    codeChar: "Г",
-                    color: "#C77DFF"
-                },
-                {
-                    id: "ice",
-                    title: "ОЖЕЛЕДЕВА ТЕРИТОРІЯ",
-                    icon: "🧊",
-                    theory: "Ожеледь — це шар льоду на поверхнях (дороги, дерева, проводи), що утворюється при замерзанні дощу або туману. Ожеледиця — це слизький стан поверхні. Іній — це кристали льоду, що утворюються в холодну пору замість роси (мал. 202).",
-                    question: "Як безпечно пересуватися під час ожеледиці?",
-                    options: [
-                        "Бігти, щоб швидше пройти небезпечну ділянку",
-                        "Дрібними кроками, не відриваючи п'яти від землі",
-                        "Стрибати, щоб зберігати рівновагу"
-                    ],
-                    correct: 1,
-                    codeChar: "Е",
-                    color: "#00FFFF"
-                },
-                {
-                    id: "blizzard",
-                    title: "ХУРТОВИНА",
-                    icon: "❄️🌪️",
-                    theory: "Хуртовина — це сильний вітер зі снігом, який погіршує видимість, заметає дороги, ускладнює рух транспорту. Під час хуртовини легко загубитися, переохолодитися, отримати обмороження.",
-                    question: "Що небезпечно робити під час сильної хуртовини?",
-                    options: [
-                        "Виходити на вулицю без потреби",
-                        "Стежити за повідомленнями ДСНС",
-                        "Утеплити вікна та двері вдома"
-                    ],
-                    correct: 0,
-                    codeChar: "Н",
-                    color: "#39FF14"
-                },
-                {
-                    id: "fog",
-                    title: "ТУМАННА ОПЕРАЦІЯ",
-                    icon: "🌫️",
-                    theory: "Туман — це хмара, що лежить на земній поверхні. Він утворюється, коли тепле вологе повітря стикається з охолодженою землею (мал. 200). Туман значно зменшує видимість, чим утруднює роботу транспорту. Якщо видимість 1-10 км — це серпанок, а в містах з пилом — смог.",
-                    question: "Що обов'язково робити під час руху в густому тумані?",
-                    options: [
-                        "Їхати швидше, щоб швидше виїхати з туману",
-                        "Увімкнути протитуманні фари та знизити швидкість",
-                        "Сигналити, щоб інші водії чули вас"
-                    ],
-                    correct: 1,
-                    codeChar: "Т",
-                    color: "#FF4081"
-                }
-            ],
-            
-            finalCode: "АГЕНТ", // Код для доступу до дешифрування
-            secretMessage: "БЕЗПЕКА", // Розшифроване повідомлення
-            
-            scoring: {
-                correctAnswer: 2,
-                allMissionsBonus: 5,
-                timeBonus: 3,
-                totalMax: 18
-            }
-        };
+    <div class="legend">
+        <span style="color:#6b4f32;">🗿 літосфера</span>
+        <span style="color:#1f7a8c;">💧 гідросфера</span>
+        <span style="color:#b0c4de;">🌬️ атмосфера</span>
+        <span style="color:#2e6b2e;">🌿 біосфера</span>
+    </div>
+    <div class="footer-note">
+        👆 проведи від однієї кулі до іншої — створи зв'язок
+    </div>
+</div>
 
-        // ============ ЗМІННІ ГРИ ============
-        let gameState = {
-            agentName: "",
-            currentScreen: 1,
-            completedMissions: [],
-            collectedCode: ["_", "_", "_", "_", "_"],
-            score: 0,
-            startTime: null,
-            certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString()
-        };
+<script>
+    (function(){
+        "use strict";
 
-        // ============ ІНІЦІАЛІЗАЦІЯ ============
-        document.addEventListener('DOMContentLoaded', function() {
-            initProject();
-            loadProgress();
-            renderMissions();
-            updateProgressTracker();
-        });
+        // ----- НАЛАШТУВАННЯ -----
+        const canvas = document.getElementById('terraCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const levelSpan = document.getElementById('levelDisplay');
+        const linksSpan = document.getElementById('linksCount');
+        const goalDesc = document.getElementById('goalDescription');
+        const resetBtn = document.getElementById('resetBtn');
 
-        function initProject() {
-            gameState.startTime = Date.now();
-            
-            // Перевіряємо, чи не був проєкт вже завершений
-            const completed = localStorage.getItem('project_completed');
-            if (completed === 'true') {
-                loadCertificateData();
-                showScreen(4);
-                document.getElementById('dsnsBtn').style.display = 'flex';
-            }
-        }
+        // ----- ОБОЛОНКИ (точки зв'язку) -----
+        const spheres = [
+            { label: 'litho', name: 'Літосфера', emoji: '🗿', x: 200, y: 240, r: 38, color: '#6b4f32', light: '#9c7e5a' },
+            { label: 'hydro', name: 'Гідросфера', emoji: '💧', x: 400, y: 200, r: 36, color: '#1f7a8c', light: '#5faab5' },
+            { label: 'atmo',  name: 'Атмосфера',  emoji: '🌬️', x: 300, y: 420, r: 42, color: '#b0c4de', light: '#d7e3f5' },
+            { label: 'bio',   name: 'Біосфера',  emoji: '🌿', x: 140, y: 400, r: 32, color: '#2e6b2e', light: '#5f9d5f' }
+        ];
 
-        function loadProgress() {
-            const saved = localStorage.getItem('safe_agent_progress');
-            if (saved) {
-                try {
-                    gameState = JSON.parse(saved);
-                    updateCodeDisplay();
-                    
-                    // Якщо всі місії пройдені - показати кнопку дешифратора
-                    if (gameState.completedMissions.length === PROJECT_CONFIG.missions.length) {
-                        document.getElementById('decoderBtn').style.display = 'block';
-                    }
-                    
-                    // Якщо ім'я вже є, показуємо його в полі
-                    if (gameState.agentName) {
-                        document.getElementById('agentName').value = gameState.agentName;
-                    }
-                } catch (e) {
-                    console.log("Помилка завантаження прогресу");
+        // Індекси для зручності
+        const LITHO = 0, HYDRO = 1, ATMO = 2, BIO = 3;
+
+        // ----- МОЖЛИВІ ЗВ'ЯЗКИ (правила кругообігу) -----
+        // кожен зв'язок: [від, до, опис]
+        const validConnections = [
+            { from: HYDRO, to: ATMO, desc: '💧→🌬️ випаровування' },
+            { from: ATMO, to: HYDRO, desc: '🌬️→💧 опади (дощ)' },
+            { from: ATMO, to: LITHO, desc: '🌬️→🗿 вивітрювання' },
+            { from: LITHO, to: BIO,   desc: '🗿→🌿 ґрунт для рослин' },
+            { from: BIO,   to: ATMO,  desc: '🌿→🌬️ фотосинтез (кисень)' },
+            { from: HYDRO, to: BIO,   desc: '💧→🌿 вода для рослин' },
+            { from: BIO,   to: HYDRO, desc: '🌿→💧 транспірація' },
+            { from: LITHO, to: HYDRO, desc: '🗿→💧 мінерали у воду' }
+        ];
+
+        // ----- СТАН ГРИ -----
+        let currentLevel = 1;
+        let requiredLinks = 3;          // скільки зв'язків потрібно для рівня
+        let completedLinks = 0;          // зроблено правильних зв'язків
+        let gameLocked = false;          // блокування після завершення рівня
+        
+        // Поточне завдання (один з validConnections)
+        let currentTask = null;
+        
+        // Для відстеження свайпу
+        let swipeStartSphere = null;      // індекс сфери, з якої почали
+        let isSwiping = false;
+        let swipePath = [];               // точки для малювання лінії
+
+        // ----- ДОПОМІЖНІ ФУНКЦІЇ -----
+        function getSphereIndexFromCoord(px, py) {
+            for (let i=0; i<spheres.length; i++) {
+                const s = spheres[i];
+                const dx = px - s.x;
+                const dy = py - s.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist <= s.r + 20) {  // трохи більша зона захвату
+                    return i;
                 }
             }
+            return -1;
         }
 
-        function saveProgress() {
-            localStorage.setItem('safe_agent_progress', JSON.stringify(gameState));
+        // Вибрати випадкове завдання, яке ще не виконане? (у нас проста логіка — одне завдання на рівень)
+        function pickRandomTask() {
+            const randomIndex = Math.floor(Math.random() * validConnections.length);
+            return { ...validConnections[randomIndex] };
         }
 
-        // ============ ЕКРАНИ ТА НАВІГАЦІЯ ============
-        function showScreen(screenNumber) {
-            document.querySelectorAll('.game-screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            document.getElementById(`screen${screenNumber}`).classList.add('active');
-            gameState.currentScreen = screenNumber;
-            
-            updateProgressTracker();
-            
-            if (screenNumber === 4) {
-                loadCertificateData();
-                document.getElementById('dsnsBtn').style.display = 'flex';
+        // Оновити відображення завдання
+        function updateTaskDisplay() {
+            if (currentTask) {
+                goalDesc.textContent = currentTask.desc;
             } else {
-                document.getElementById('dsnsBtn').style.display = 'none';
+                goalDesc.textContent = '✨ обери зв’язок';
             }
         }
 
-        function updateProgressTracker() {
-            const steps = document.querySelectorAll('.progress-step');
-            steps.forEach((step, index) => {
-                step.classList.remove('active');
-                if (index + 1 === gameState.currentScreen) {
-                    step.classList.add('active');
-                }
-            });
+        // Перевірка, чи виконано поточне завдання
+        function isTaskCompleted(connection) {
+            if (!currentTask) return false;
+            return (connection.from === currentTask.from && connection.to === currentTask.to);
         }
 
-        // ============ СКАНУВАННЯ ============
-        function startBioScan() {
-            const nameInput = document.getElementById('agentName').value.trim();
-            if (!nameInput) {
-                alert("Агенте, спочатку введіть своє ім'я!");
-                return;
-            }
-            
-            gameState.agentName = nameInput;
-            document.getElementById('scanStatus').innerHTML = '<p><i class="fas fa-sync-alt fa-spin"></i> СКАНУВАННЯ...</p>';
-            document.getElementById('scanLine').style.display = 'block';
-            document.getElementById('fingerIcon').style.opacity = '0.7';
-            
+        // Перехід на наступний рівень
+        function advanceLevel() {
+            currentLevel++;
+            requiredLinks = Math.min(8, 3 + Math.floor(currentLevel / 2)); // зростає складність
+            completedLinks = 0;
+            gameLocked = false;
+            currentTask = pickRandomTask();
+            updateTaskDisplay();
+            updateUI();
+        }
+
+        // Скидання прогресу рівня (якщо гравець хоче заново)
+        function resetLevel() {
+            completedLinks = 0;
+            gameLocked = false;
+            // можна змінити завдання на нове
+            currentTask = pickRandomTask();
+            updateTaskDisplay();
+            updateUI();
+        }
+
+        // Оновлення тексту UI
+        function updateUI() {
+            levelSpan.textContent = currentLevel;
+            linksSpan.textContent = `${completedLinks}/${requiredLinks}`;
+        }
+
+        // Завершення рівня (коли досягнуто requiredLinks)
+        function finishLevel() {
+            gameLocked = true;
+            // показуємо повідомлення
+            drawScene(); // оновимо canvas
             setTimeout(() => {
-                document.getElementById('scanLine').style.display = 'none';
-                document.getElementById('scanStatus').innerHTML = `
-                    <p style="color: var(--neon-green);">
-                        <i class="fas fa-check-circle"></i> ІДЕНТИФІКАЦІЮ ПРОЙДЕНО
-                    </p>
-                    <p>Агент: <strong>${gameState.agentName}</strong></p>
-                `;
-                document.getElementById('startMissionBtn').style.display = 'block';
-                saveProgress();
-            }, 2000);
+                if (gameLocked) {
+                    advanceLevel();
+                    drawScene();
+                }
+            }, 700);
         }
 
-        function startMission() {
-            showScreen(2);
-        }
-
-        // ============ МІСІЇ ============
-        function renderMissions() {
-            const container = document.getElementById('missionsContainer');
-            container.innerHTML = '';
+        // Спроба додати зв'язок
+        function attemptConnection(fromIdx, toIdx) {
+            if (gameLocked) return false;
+            if (fromIdx === toIdx) return false;
             
-            PROJECT_CONFIG.missions.forEach((mission, index) => {
-                const isCompleted = gameState.completedMissions.includes(mission.id);
-                const card = document.createElement('div');
-                card.className = `mission-card ${isCompleted ? 'completed' : ''}`;
-                card.style.borderColor = mission.color;
-                card.onclick = () => openMission(mission.id);
-                
-                card.innerHTML = `
-                    <div class="mission-icon">${mission.icon}</div>
-                    <h3>${mission.title}</h3>
-                    <p>${mission.question.substring(0, 40)}...</p>
-                    ${isCompleted ? 
-                        `<div class="mission-code">${mission.codeChar}</div>` : 
-                        `<div style="color: #666; margin-top: 10px;"><i class="fas fa-lock"></i> Завдання</div>`
-                    }
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-
-        function openMission(missionId) {
-            const mission = PROJECT_CONFIG.missions.find(m => m.id === missionId);
-            if (!mission) return;
-            
-            if (gameState.completedMissions.includes(missionId)) {
-                alert("✅ Цю місію вже виконано! Символ отримано.");
-                return;
+            // Перевіряємо, чи є такий зв'язок серед validConnections
+            const conn = validConnections.find(c => c.from === fromIdx && c.to === toIdx);
+            if (!conn) {
+                // Неправильний зв'язок — можна показати підказку (але без штрафу)
+                return false;
             }
             
-            document.getElementById('missionsContainer').style.display = 'none';
-            document.getElementById('missionDetail').style.display = 'block';
+            // Перевіряємо, чи це поточне завдання
+            if (!isTaskCompleted(conn)) {
+                // Можна дати зворотний зв'язок: "не те завдання"
+                return false;
+            }
             
-            document.getElementById('missionTitle').textContent = mission.title;
-            document.getElementById('missionTheory').textContent = mission.theory;
-            document.getElementById('missionQuestion').textContent = mission.question;
+            // Правильний зв'язок!
+            completedLinks++;
+            updateUI();
             
-            const optionsContainer = document.getElementById('missionOptions');
-            optionsContainer.innerHTML = '';
+            // Візуальний ефект: збережемо останній успішний зв'язок для малювання
+            lastSuccessConnection = { from: fromIdx, to: toIdx };
             
-            mission.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'btn-secondary';
-                button.style.width = '100%';
-                button.style.padding = '15px';
-                button.style.textAlign = 'left';
-                button.style.marginBottom = '10px';
-                button.innerHTML = `<span style="font-weight: bold; margin-right: 10px;">${String.fromCharCode(65 + index)}.</span> ${option}`;
-                button.onclick = () => checkAnswer(missionId, index);
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        function closeMission() {
-            document.getElementById('missionsContainer').style.display = 'grid';
-            document.getElementById('missionDetail').style.display = 'none';
-        }
-
-        function checkAnswer(missionId, selectedIndex) {
-            const mission = PROJECT_CONFIG.missions.find(m => m.id === missionId);
-            const isCorrect = selectedIndex === mission.correct;
-            
-            if (isCorrect) {
-                if (!gameState.completedMissions.includes(missionId)) {
-                    gameState.completedMissions.push(missionId);
-                    
-                    const missionIndex = PROJECT_CONFIG.missions.findIndex(m => m.id === missionId);
-                    gameState.collectedCode[missionIndex] = mission.codeChar;
-                    
-                    gameState.score += PROJECT_CONFIG.scoring.correctAnswer;
-                    
-                    updateCodeDisplay();
-                    renderMissions();
-                    saveProgress();
-                    
-                    if (gameState.completedMissions.length === PROJECT_CONFIG.missions.length) {
-                        document.getElementById('decoderBtn').style.display = 'block';
-                        gameState.score += PROJECT_CONFIG.scoring.allMissionsBonus;
-                        
-                        const timeSpent = (Date.now() - gameState.startTime) / 1000 / 60;
-                        if (timeSpent < 15) {
-                            gameState.score += PROJECT_CONFIG.scoring.timeBonus;
-                        }
-                    }
-                    
-                    alert(`✅ ВІРНО!\nОтримано символ: ${mission.codeChar}`);
-                }
-                closeMission();
+            if (completedLinks >= requiredLinks) {
+                finishLevel();
             } else {
-                alert("❌ ПОМИЛКА! Спробуй ще раз, уважно прочитай теоретичну частину.");
+                // Видаємо нове завдання (наступний крок кругообігу)
+                currentTask = pickRandomTask();
+                updateTaskDisplay();
             }
+            drawScene();
+            return true;
         }
 
-        function updateCodeDisplay() {
-            for (let i = 0; i < 5; i++) {
-                const char = gameState.collectedCode[i];
-                const element = document.getElementById(`codeChar${i + 1}`);
-                
-                if (char === '_') {
-                    element.textContent = '⚫';
-                    element.style.color = '#666';
-                    element.style.textShadow = 'none';
-                } else {
-                    element.textContent = char;
-                    element.style.color = PROJECT_CONFIG.missions[i].color;
-                    element.style.textShadow = `0 0 10px ${PROJECT_CONFIG.missions[i].color}`;
-                }
-            }
-        }
-
-        // ============ ДЕШИФРУВАННЯ ============
-        function openDecoder() {
-            showScreen(3);
-        }
-
-        function startDecoding() {
-            const inputCode = document.getElementById('finalCode').value.toUpperCase().trim();
+        // ----- МАЛЮВАННЯ -----
+        let lastSuccessConnection = null; // для підсвічування
+        
+        function drawScene() {
+            ctx.clearRect(0, 0, 600, 600);
             
-            if (inputCode.length !== 5) {
-                alert("Код має містити рівно 5 символів!");
+            // Фон "старий папір"
+            ctx.fillStyle = '#aac0a2';
+            ctx.fillRect(0, 0, 600, 600);
+            // текстура
+            ctx.fillStyle = '#8da384';
+            for(let i=0; i<30; i++) {
+                ctx.beginPath();
+                ctx.arc(30+(i*23)%580, 40+(i*31)%560, 1.5, 0, 2*Math.PI);
+                ctx.fill();
+            }
+            
+            // Схематичне ядро Землі
+            ctx.beginPath();
+            ctx.arc(300, 300, 70, 0, 2*Math.PI);
+            const grad = ctx.createRadialGradient(270, 270, 15, 300, 300, 70);
+            grad.addColorStop(0, '#b35e2e');
+            grad.addColorStop(1, '#6d371a');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.shadowColor = '#4a2e1a';
+            ctx.shadowBlur = 14;
+            ctx.strokeStyle = '#eadbba';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // Підписи "Земля"
+            ctx.font = 'bold 16px "Segoe UI", sans-serif';
+            ctx.fillStyle = '#f9efd3';
+            ctx.shadowColor = '#1f2e0e';
+            ctx.shadowBlur = 8;
+            ctx.fillText('🌍 ЯДРО', 250, 310);
+            ctx.shadowBlur = 0;
+            
+            // Малюємо зв'язки (лінії) між сферами, які вже "відкриті"? 
+            // Ми не зберігаємо історію, але можемо показати останній успішний зв'язок.
+            if (lastSuccessConnection) {
+                const fromS = spheres[lastSuccessConnection.from];
+                const toS = spheres[lastSuccessConnection.to];
+                ctx.beginPath();
+                ctx.moveTo(fromS.x, fromS.y);
+                ctx.lineTo(toS.x, toS.y);
+                ctx.strokeStyle = '#f5e56b';
+                ctx.lineWidth = 7;
+                ctx.shadowBlur = 16;
+                ctx.shadowColor = '#ffd966';
+                ctx.setLineDash([8, 8]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.shadowBlur = 0;
+            }
+            
+            // Малюємо лінію свайпу (якщо активний)
+            if (isSwiping && swipePath.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(swipePath[0].x, swipePath[0].y);
+                for (let i=1; i<swipePath.length; i++) {
+                    ctx.lineTo(swipePath[i].x, swipePath[i].y);
+                }
+                ctx.strokeStyle = '#f2e09f';
+                ctx.lineWidth = 8;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#c9a84b';
+                ctx.setLineDash([10, 6]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.shadowBlur = 0;
+            }
+            
+            // Малюємо сфери оболонок
+            spheres.forEach((s, idx) => {
+                // тінь
+                ctx.shadowColor = '#3a2e1e';
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetY = 3;
+                
+                const grad = ctx.createRadialGradient(s.x-10, s.y-10, 6, s.x, s.y, s.r+6);
+                grad.addColorStop(0, s.light);
+                grad.addColorStop(1, s.color);
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, 2*Math.PI);
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.shadowBlur = 6;
+                ctx.strokeStyle = '#efe0c6';
+                ctx.lineWidth = 5;
+                ctx.stroke();
+                
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+                // емодзі
+                ctx.font = `bold ${s.r * 0.8}px 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji'`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#1f2a16';
+                ctx.fillText(s.emoji, s.x, s.y-6);
+                // назва
+                ctx.font = '500 13px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#1e331c';
+                ctx.fillText(s.name, s.x, s.y + s.r-8);
+            });
+            
+            // Підказка, якщо рівень завершено
+            if (gameLocked) {
+                ctx.font = 'bold 24px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#2d5120';
+                ctx.shadowColor = '#eadbba';
+                ctx.shadowBlur = 12;
+                ctx.fillText('🌟 РІВЕНЬ ПРОЙДЕНО!', 150, 140);
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // ----- ОБРОБКА СВАЙПІВ (touch + mouse) -----
+        function handleStart(e) {
+            e.preventDefault();
+            if (gameLocked) return;
+            
+            const coord = getCanvasCoord(e);
+            if (!coord) return;
+            const idx = getSphereIndexFromCoord(coord.x, coord.y);
+            if (idx !== -1) {
+                swipeStartSphere = idx;
+                isSwiping = true;
+                swipePath = [{ x: coord.x, y: coord.y }];
+                drawScene();
+            }
+        }
+
+        function handleMove(e) {
+            e.preventDefault();
+            if (!isSwiping || gameLocked) return;
+            
+            const coord = getCanvasCoord(e);
+            if (!coord) return;
+            
+            // Додаємо точку до шляху (обмежимо кількість для плавності)
+            swipePath.push({ x: coord.x, y: coord.y });
+            if (swipePath.length > 20) swipePath.shift();
+            
+            drawScene();
+        }
+
+        function handleEnd(e) {
+            e.preventDefault();
+            if (!isSwiping || gameLocked) {
+                isSwiping = false;
+                swipePath = [];
+                drawScene();
                 return;
             }
             
-            // Якщо код невірний — не пускаємо далі, просимо спробувати знову
-            if (inputCode !== PROJECT_CONFIG.finalCode) {
-                alert("❌ КОД НЕВІРНИЙ! Спробуйте ще раз. Підказка: це слово з 5 літер, яке означає вас — АГЕНТ.");
-                return; // Виходимо, кнопка сертифіката не з'явиться
+            const coord = getCanvasCoord(e);
+            if (coord) {
+                const endIdx = getSphereIndexFromCoord(coord.x, coord.y);
+                if (swipeStartSphere !== null && endIdx !== -1 && swipeStartSphere !== endIdx) {
+                    attemptConnection(swipeStartSphere, endIdx);
+                }
             }
             
-            // Якщо код правильний — запускаємо анімацію
-            const decodeResult = document.getElementById('decodeResult');
-            const decodeMessage = document.getElementById('decodingMessage');
-            
-            decodeMessage.innerHTML = '<p><i class="fas fa-sync-alt fa-spin"></i> ЗАПУСК КВАНТОВОГО АНАЛІЗУ...</p>';
-            
-            let steps = 0;
-            const interval = setInterval(() => {
-                let randomChars = '';
-                for (let i = 0; i < 7; i++) {
-                    randomChars += String.fromCharCode(65 + Math.floor(Math.random() * 26));
-                }
-                decodeResult.textContent = randomChars;
-                
-                steps++;
-                
-                if (steps === 10) {
-                    clearInterval(interval);
-                    decodeResult.textContent = PROJECT_CONFIG.secretMessage;
-                    decodeMessage.innerHTML = `
-                        <p style="color: var(--neon-green); font-size: 24px;">
-                            <i class="fas fa-check-circle"></i> ДЕШИФРУВАНО!
-                        </p>
-                        <p>Секретне повідомлення: <strong>${PROJECT_CONFIG.secretMessage}</strong></p>
-                        <p>Ти став справжнім агентом безпеки!</p>
-                    `;
-                    
-                    document.getElementById('certificateBtn').style.display = 'block';
-                }
-            }, 300);
+            // Скидаємо свайп
+            isSwiping = false;
+            swipePath = [];
+            swipeStartSphere = null;
+            drawScene();
         }
 
-        // ============ СЕРТИФІКАТ ============
-        function showCertificate() {
-            showScreen(4);
+        // Отримання координат відносно canvas
+        function getCanvasCoord(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            let clientX, clientY;
+            if (e.touches) {
+                if (e.touches.length === 0) return null;
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
         }
 
-        function loadCertificateData() {
-            document.getElementById('certName').textContent = gameState.agentName ? gameState.agentName.toUpperCase() : "[ІМ'Я АГЕНТА]";
-            document.getElementById('certNumber').textContent = gameState.certificateNumber;
+        // ----- ІНІЦІАЛІЗАЦІЯ ПОДІЙ -----
+        function bindEvents() {
+            canvas.addEventListener('touchstart', handleStart, { passive: false });
+            canvas.addEventListener('touchmove', handleMove, { passive: false });
+            canvas.addEventListener('touchend', handleEnd, { passive: false });
+            canvas.addEventListener('touchcancel', handleEnd, { passive: false });
             
-            const now = new Date();
-            const dateString = now.toLocaleDateString('uk-UA', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
+            canvas.addEventListener('mousedown', handleStart);
+            canvas.addEventListener('mousemove', handleMove);
+            canvas.addEventListener('mouseup', handleEnd);
+            canvas.addEventListener('mouseleave', handleEnd);
+            
+            canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        }
+
+        // ----- СКИДАННЯ / НОВА ГРА -----
+        function fullReset() {
+            currentLevel = 1;
+            requiredLinks = 3;
+            completedLinks = 0;
+            gameLocked = false;
+            currentTask = pickRandomTask();
+            lastSuccessConnection = null;
+            updateTaskDisplay();
+            updateUI();
+            drawScene();
+        }
+
+        // ----- СТАРТ -----
+        function init() {
+            bindEvents();
+            fullReset();
+            resetBtn.addEventListener('click', () => {
+                fullReset();
             });
-            document.getElementById('certDate').textContent = dateString;
         }
 
-        function printCertificate() {
-            window.print();
-        }
-
-        function shareCertificate() {
-            const text = `Я, ${gameState.agentName}, став(ла) агентом безпеки ДСНС України! Пройшов(ла) курс "Атмосферні опади: небезпечні явища" та отримав(ла) сертифікат №${gameState.certificateNumber}. Будьте безпечні!`;
-            alert(`Поділися цим текстом:\n\n${text}\n\nСкопіюй та встав у соцмережі!`);
-        }
-
-        // ============ ЗАВЕРШЕННЯ ПРОЄКТУ ============
-        function finishProject() {
-            localStorage.setItem('project_score', gameState.score);
-            localStorage.setItem('project_completed', 'true');
-            localStorage.setItem('project_agent', gameState.agentName);
-            
-            const finalScore = Math.min(gameState.score, PROJECT_CONFIG.scoring.totalMax);
-            const message = `
-                🎉 ПРОЄКТ УСПІШНО ЗАВЕРШЕНО!
-                
-                Твій результат: ${finalScore}/${PROJECT_CONFIG.scoring.totalMax} балів
-                
-                Ти став(ла) справжнім агентом безпеки!
-                Знаєш правила поведінки під час:
-                ✓ Граду
-                ✓ Грози
-                ✓ Ожеледиці
-                ✓ Хуртовини
-                ✓ Туману
-                
-                Бажаємо безпечних подорожей!
-            `;
-            
-            alert(message);
-            
-            if (confirm("Повернутися на головну сторінку?")) {
-                window.location.href = 'index.html';
-            }
-        }
-
-        // ============ ДОДАТКОВІ ФУНКЦІЇ ============
-        // Функцію showHint() видалено за запитом користувача
-
-        function restartProject() {
-            if (confirm("Точно хочеш почати проєкт з початку? Весь прогрес буде втрачено.")) {
-                localStorage.removeItem('safe_agent_progress');
-                localStorage.removeItem('project_completed');
-                gameState = {
-                    agentName: "",
-                    currentScreen: 1,
-                    completedMissions: [],
-                    collectedCode: ["_", "_", "_", "_", "_"],
-                    score: 0,
-                    startTime: Date.now(),
-                    certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString()
-                };
-                document.getElementById('agentName').value = '';
-                document.getElementById('startMissionBtn').style.display = 'none';
-                document.getElementById('scanStatus').innerHTML = '<p><i class="fas fa-clock"></i> Очікування сканування...</p>';
-                document.getElementById('fingerIcon').style.opacity = '0.3';
-                renderMissions();
-                updateCodeDisplay();
-                showScreen(1);
-                document.getElementById('dsnsBtn').style.display = 'none';
-            }
-        }
-    </script>
+        init();
+    })();
+</script>
 </body>
 </html>
