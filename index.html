@@ -3,1284 +3,609 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Проєкт: Агент Безпеки | Атмосферні опади</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Ґрунтові пригоди | Агент родючості</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --neon-green: #00ffaa;
-            --neon-blue: #00ffff;
-            --matrix-green: #39ff14;
-            --dark-bg: #0a0a0a;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-orange: #ff9500;
-        }
-
         body {
-            background: linear-gradient(135deg, #0f172a, #1a0b2e);
-            color: white;
-            font-family: 'Nunito', sans-serif;
-            margin: 0;
-            padding: 10px;
+            background: linear-gradient(145deg, #f9e7b3 0%, #f5c542 100%);
+            font-family: 'Quicksand', sans-serif;
+            padding: 12px;
             min-height: 100vh;
-            font-size: 16px;
         }
 
-        .container {
-            max-width: 100%;
-            width: 100%;
+        /* Головний контейнер */
+        .game-wrapper {
+            max-width: 550px;
             margin: 0 auto;
-            padding: 10px;
-        }
-
-        /* Навігація проєкту */
-        .project-header {
-            text-align: center;
-            padding: 20px 15px;
-            background: rgba(0, 255, 255, 0.1);
-            border-radius: 20px;
-            border: 2px solid var(--neon-blue);
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .project-title {
-            font-size: clamp(24px, 8vw, 42px);
-            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        .project-subtitle {
-            font-size: clamp(14px, 4vw, 20px);
-            opacity: 0.9;
-            margin-bottom: 15px;
-        }
-
-        .project-badge {
-            display: inline-block;
-            background: linear-gradient(45deg, #ff4081, #c77dff);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 50px;
-            font-weight: 900;
-            margin: 5px;
-            font-size: 14px;
-        }
-
-        /* Екрани гри */
-        .game-screen {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .game-screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Сканнер */
-        .scanner-container {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            padding: 25px 20px;
-            border: 3px solid var(--neon-green);
-            position: relative;
+            background: rgba(255, 248, 225, 0.9);
+            border-radius: 64px 64px 48px 48px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2), inset 0 1px 4px rgba(255,255,200,0.8);
             overflow: hidden;
-            margin: 20px auto;
-            max-width: 100%;
-            width: 100%;
+            backdrop-filter: blur(2px);
+            border: 3px solid #ffdd99;
         }
 
-        .scanner-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(transparent, var(--neon-blue), transparent 30%);
-            animation: rotate 4s linear infinite;
+        /* Шапка з хробаком */
+        .game-header {
+            background: #6b3e1c;
+            padding: 20px 15px 15px;
+            text-align: center;
+            color: #fff2b5;
+            border-bottom: 5px solid #ffb347;
         }
 
-        .scanner-container > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
-        .fingerprint-scanner {
-            width: 150px;
-            height: 180px;
-            border: 3px dashed var(--neon-green);
-            border-radius: 50%;
-            margin: 20px auto;
-            position: relative;
-            cursor: pointer;
+        .worm-mascot {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 255, 170, 0.05);
-            transition: all 0.3s;
+            gap: 10px;
+            background: #ffdd99;
+            border-radius: 100px;
+            padding: 8px 20px;
+            width: fit-content;
+            margin: 0 auto 12px;
+            box-shadow: 0 5px 0 #b97f2e;
+        }
+        .worm-mascot i {
+            font-size: 38px;
+            color: #a5673f;
+            animation: wiggle 2s infinite ease;
+        }
+        @keyframes wiggle {
+            0%,100%{ transform: rotate(0deg); }
+            25%{ transform: rotate(5deg); }
+            75%{ transform: rotate(-5deg); }
+        }
+        .worm-mascot span {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #4a2a12;
+        }
+        .game-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 3px 3px 0 #9b5e2c;
         }
 
-        .fingerprint-scanner:hover {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+        /* Прогрес-трекер (веселий) */
+        .progress-fun {
+            display: flex;
+            background: #f3d382;
+            padding: 12px;
+            justify-content: space-around;
+            border-radius: 50px;
+            margin: 15px;
+        }
+        .step-badge {
+            background: #fef1cf;
+            border-radius: 40px;
+            padding: 6px 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #5a3a1a;
+            box-shadow: inset 0 -1px 0 #ccaa77, 0 3px 0 #b97f2e;
+        }
+        .step-badge.active {
+            background: #ffb347;
+            color: white;
+            box-shadow: 0 0 0 3px #ffeaab;
         }
 
-        .fingerprint-icon {
-            font-size: 60px;
-            color: var(--neon-green);
-            opacity: 0.3;
-            transition: opacity 0.5s;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 10%;
-            width: 80%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
-            box-shadow: 0 0 20px var(--neon-green);
+        /* Екрани */
+        .screen {
             display: none;
-            animation: scan 2s linear infinite;
+            padding: 20px;
+            animation: bounceIn 0.4s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            80% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+        /* Кнопки-цукерки */
+        .candy-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c1a);
+            border: none;
+            color: white;
+            font-weight: 800;
+            padding: 14px 20px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 7px 0 #a65311;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .candy-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 4px 0 #a65311;
+        }
+        .candy-btn-small {
+            background: #70b85e;
+            box-shadow: 0 5px 0 #3e6b2f;
+            font-size: 1rem;
         }
 
-        /* Місії */
+        /* Сканер ґрунту */
+        .soil-scanner {
+            background: #e5c48a;
+            border-radius: 50px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            border: 3px dashed #ffb347;
+        }
+        .dig-area {
+            background: #b87c4f;
+            border-radius: 100px;
+            width: 130px;
+            height: 130px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: inset 0 0 0 5px #e9bc7d, 0 10px 15px rgba(0,0,0,0.2);
+        }
+        .dig-area:active { transform: scale(0.96); }
+
+        /* Місії (картки) */
         .missions-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
             gap: 15px;
             margin: 20px 0;
         }
-
         .mission-card {
-            background: var(--card-bg);
-            border: 2px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
+            background: #fff3df;
+            border-radius: 35px;
+            padding: 15px;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+            border: 2px solid #f0bc6e;
+            transition: all 0.2s;
+            box-shadow: 0 6px 0 #cf9f4a;
         }
-
-        .mission-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
-        }
-
         .mission-card.completed {
-            border-color: gold;
-            background: rgba(255, 215, 0, 0.1);
+            background: #cbe5b4;
+            border-color: #6f9e3f;
+            filter: drop-shadow(0 0 8px #b3ff8f);
         }
-
-        .mission-card.completed::after {
-            content: '✓';
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            color: gold;
-            font-size: 28px;
+        .mission-icon { font-size: 3rem; }
+        .code-symbol {
+            background: #ffc107;
+            display: inline-block;
+            border-radius: 30px;
+            padding: 3px 12px;
             font-weight: bold;
+            margin-top: 8px;
         }
 
-        .mission-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-            color: var(--neon-blue);
-        }
-
-        .mission-code {
-            position: absolute;
-            bottom: 10px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--matrix-green);
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
+        /* Кодовий дисплей */
+        .code-display {
+            background: #2e241f;
+            border-radius: 60px;
+            padding: 12px;
+            text-align: center;
+            font-size: 2.5rem;
+            letter-spacing: 15px;
             font-weight: bold;
-            font-size: 22px;
-            border: 1px solid var(--matrix-green);
+            color: #ffd966;
+            margin: 15px 0;
         }
 
-        /* Інтерактивна вправа */
-        .quiz-container {
-            background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(0, 255, 255, 0.05));
-            border-radius: 20px;
-            padding: 20px;
-            border: 2px solid var(--accent-orange);
-            margin: 20px 0;
-        }
-
-        .weather-simulation {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
+        /* Свайп-панель (горизонти) */
+        .swipe-card {
+            background: #fffaec;
+            border-radius: 35px;
             padding: 15px;
             margin: 15px 0;
-            border-left: 4px solid var(--neon-blue);
-            font-size: 15px;
         }
-
-        /* Шифрувальник */
-        .decoder-interface {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid var(--matrix-green);
-            border-radius: 20px;
-            padding: 25px 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
+        .horizon-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 10px 5px;
+            scroll-snap-type: x mandatory;
         }
-
-        .code-display {
-            font-size: clamp(32px, 10vw, 48px);
-            letter-spacing: 10px;
-            text-align: center;
-            color: var(--matrix-green);
-            margin: 20px 0;
-            text-shadow: 0 0 10px var(--matrix-green);
-            min-height: 60px;
+        .horizon-item {
+            flex: 0 0 85%;
+            background: #f7e5c2;
+            border-radius: 28px;
             padding: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            border: 1px solid rgba(57, 255, 20, 0.3);
-            word-break: break-word;
+            scroll-snap-align: start;
+            border-left: 12px solid #d9942c;
         }
 
-        /* Сертифікат */
-        .certificate-container {
-            background: white;
-            color: black;
-            border: 10px solid gold;
-            padding: 25px 15px;
-            border-radius: 5px;
-            text-align: center;
-            margin: 20px auto;
-            max-width: 100%;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        .certificate-container::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 2px solid #8B4513;
-            pointer-events: none;
-        }
-
-        .certificate-logo {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-
-        .certificate-title {
-            font-size: clamp(24px, 6vw, 36px);
-            color: #8B4513;
-            margin-bottom: 10px;
-            font-weight: 900;
-        }
-
-        .certificate-subtitle {
-            font-size: clamp(14px, 4vw, 20px);
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .certificate-name {
-            font-size: clamp(28px, 7vw, 48px);
-            color: #1a0b2e;
-            margin: 20px 0;
-            padding: 15px 10px;
-            border-top: 3px double gold;
-            border-bottom: 3px double gold;
-            word-break: break-word;
-        }
-
-        /* Прогрес */
-        .progress-tracker {
+        /* Бали та таймер */
+        .stats {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin: 20px 0;
-            padding: 15px 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            gap: 5px;
-        }
-
-        .progress-step {
-            text-align: center;
-            flex: 1;
-            position: relative;
-            font-size: 12px;
-        }
-
-        .progress-step.active .step-number {
-            background: var(--neon-green);
-            color: black;
-            box-shadow: 0 0 20px var(--neon-green);
-        }
-
-        .step-number {
-            width: 32px;
-            height: 32px;
-            background: #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 5px;
-            font-weight: 900;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-green));
-            color: black;
-            font-weight: 900;
-            border: none;
+            background: #f3cf7a;
             border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 15px 20px;
-            font-size: 18px;
-            width: 100%;
-            max-width: 300px;
-            margin: 10px auto;
-            display: block;
-        }
-
-        .btn-primary:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 20px var(--neon-blue);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--neon-blue);
-            color: white;
-            border-radius: 30px;
-            padding: 12px 18px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 16px;
-            width: 100%;
-            margin: 5px 0;
-        }
-
-        .btn-secondary:hover {
-            background: var(--neon-blue);
-            color: black;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 15px;
-            border: 2px solid var(--neon-blue);
-            background: rgba(255,255,255,0.1);
-            color: white;
-            text-align: center;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--neon-green);
-            box-shadow: 0 0 20px var(--neon-green);
-        }
-
-        /* Toast повідомлення */
-        #toast-message {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            z-index: 9999;
-            border-left: 6px solid var(--neon-green);
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            transition: opacity 0.3s;
-            text-align: center;
-            max-width: 90%;
-            pointer-events: none;
-        }
-
-        /* Фіксована кнопка ДСНС */
-        .dsns-fixed-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 999;
-            background: #ffd700;
-            color: #0f172a;
-            padding: 12px 18px;
-            border-radius: 50px;
-            font-weight: 900;
-            text-decoration: none;
-            box-shadow: 0 0 20px #ffd700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            border: 2px solid white;
-        }
-
-        .dsns-fixed-btn i {
-            font-size: 20px;
-        }
-
-        /* Допоміжні кнопки */
-        .fixed-buttons {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .fixed-buttons .btn-secondary {
-            width: auto;
-            padding: 10px 15px;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        /* Блок балів */
-        .score-panel {
-            background: rgba(0, 255, 170, 0.2);
-            border: 2px solid var(--neon-green);
-            border-radius: 30px;
             padding: 8px 20px;
-            display: inline-block;
             margin: 10px 0;
             font-weight: bold;
         }
-
-        @media (max-width: 480px) {
-            .step-number {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-            .progress-step {
-                font-size: 10px;
-            }
+        .reward-message {
+            background: #f3b33d;
+            border-radius: 40px;
+            padding: 18px;
+            text-align: center;
+            font-weight: 800;
+            margin: 20px 0;
+            font-size: 1.2rem;
         }
 
-        /* Друк сертифіката */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .certificate-container {
-                border: 5px solid gold;
-                box-shadow: none;
-                margin: 0;
-            }
+        /* Сертифікат */
+        .certificate {
+            background: #fef9e6;
+            border-radius: 35px;
+            padding: 25px;
+            text-align: center;
+            border: 8px double #f3b33d;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Заголовок проєкту -->
-        <header class="project-header">
-            <h1 class="project-title">🌪️ АГЕНТ БЕЗПЕКИ: АТМОСФЕРНІ ОПАДИ</h1>
-            <p class="project-subtitle">Фінальна місія: навчальний проєкт з безпеки</p>
-            <div>
-                <span class="project-badge">ДСНС України</span>
-                <span class="project-badge">6 клас НУШ</span>
-                <span class="project-badge">Стихійні явища</span>
-            </div>
-        </header>
-
-        <!-- Трекер прогресу -->
-        <div class="progress-tracker">
-            <div class="progress-step active">
-                <div class="step-number">1</div>
-                <div>Ідентифікація</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-number">2</div>
-                <div>Місії</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-number">3</div>
-                <div>Шифрування</div>
-            </div>
-            <div class="progress-step">
-                <div class="step-number">4</div>
-                <div>Сертифікат</div>
-            </div>
+<div class="game-wrapper">
+    <div class="game-header">
+        <div class="worm-mascot">
+            <i class="fas fa-worm"></i>
+            <span>Хробак Грунтик</span>
+            <i class="fas fa-seedling"></i>
         </div>
-
-        <!-- Екран 1: Ідентифікація -->
-        <div id="screen1" class="game-screen active">
-            <h2><i class="fas fa-fingerprint"></i> ІДЕНТИФІКАЦІЯ АГЕНТА</h2>
-            <p>Вітаємо в Центрі підготовки агентів безпеки ДСНС України. Для доступу до місії необхідно пройти ідентифікацію.</p>
-            
-            <div style="max-width: 100%; margin: 20px auto;">
-                <input type="text" id="agentName" class="input-field" placeholder="Введіть своє повне ім'я">
-            </div>
-
-            <div class="scanner-container">
-                <h3><i class="fas fa-qrcode"></i> СКАНУВАННЯ БІОМЕТРІЇ</h3>
-                <p>Натисніть на сканер для перевірки відбитка</p>
-                
-                <div class="fingerprint-scanner" onclick="startBioScan()">
-                    <i class="fas fa-fingerprint fingerprint-icon" id="fingerIcon"></i>
-                    <div class="scan-line" id="scanLine"></div>
-                </div>
-                
-                <div id="scanStatus" style="text-align: center; margin-top: 20px; min-height: 40px;">
-                    <p><i class="fas fa-clock"></i> Очікування сканування...</p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="startMissionBtn" class="btn-primary" style="display: none;" onclick="startMission()">
-                    <i class="fas fa-play-circle"></i> ПОЧАТИ МІСІЮ
-                </button>
-            </div>
-        </div>
-
-        <!-- Екран 2: Місії -->
-        <div id="screen2" class="game-screen">
-            <h2><i class="fas fa-tasks"></i> ОПЕРАТИВНІ МІСІЇ</h2>
-            <p>Ваше завдання — зібрати 5 фрагментів коду, вивчивши правила безпеки під час різних небезпечних явищ. Кожна правильна відповідь відкриває частину коду.</p>
-            
-            <!-- Бали -->
-            <div class="score-panel">
-                <i class="fas fa-star"></i> Бали: <span id="scoreValue">0</span> / <span id="maxScore">18</span>
-            </div>
-
-            <div class="code-display" id="cipherDisplay">
-                <span id="codeChar1">⚫</span>
-                <span id="codeChar2">⚫</span>
-                <span id="codeChar3">⚫</span>
-                <span id="codeChar4">⚫</span>
-                <span id="codeChar5">⚫</span>
-            </div>
-
-            <div class="missions-grid" id="missionsContainer">
-                <!-- Місії генеруються через JavaScript -->
-            </div>
-
-            <div id="missionDetail" style="display: none;">
-                <div class="quiz-container">
-                    <h3 id="missionTitle"></h3>
-                    <div class="weather-simulation">
-                        <h4><i class="fas fa-info-circle"></i> ТЕОРЕТИЧНА ЧАСТИНА</h4>
-                        <p id="missionTheory"></p>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <h4><i class="fas fa-question-circle"></i> ПРАКТИЧНЕ ЗАВДАННЯ</h4>
-                        <p id="missionQuestion"></p>
-                        <div id="missionOptions" style="display: grid; gap: 10px; margin: 20px 0;"></div>
-                    </div>
-                    
-                    <button class="btn-secondary" onclick="closeMission()">
-                        <i class="fas fa-arrow-left"></i> Повернутися до місій
-                    </button>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="decoderBtn" class="btn-primary" style="display: none;" onclick="openDecoder()">
-                    <i class="fas fa-key"></i> ВІДКРИТИ ДЕШИФРАТОР
-                </button>
-            </div>
-        </div>
-
-        <!-- Екран 3: Дешифрування -->
-        <div id="screen3" class="game-screen">
-            <h2><i class="fas fa-lock"></i> КВАНТОВИЙ ДЕШИФРАТОР</h2>
-            <p>Введіть отриманий код з 5 символів для розшифровки секретного повідомлення</p>
-            
-            <div class="decoder-interface">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <input type="text" id="finalCode" maxlength="5" placeholder="5 символів" class="input-field" style="letter-spacing: 5px; font-family: 'Courier New', monospace; text-transform: uppercase;">
-                </div>
-                
-                <div style="text-align: center;">
-                    <button class="btn-primary" onclick="startDecoding()" style="padding: 15px 20px;">
-                        <i class="fas fa-bolt"></i> ЗАПУСТИТИ ДЕШИФРУВАННЯ
-                    </button>
-                </div>
-                
-                <div id="decodingAnimation" style="text-align: center; margin-top: 30px; min-height: 100px;">
-                    <div id="decodeResult" class="code-display"></div>
-                </div>
-                
-                <div id="decodingMessage" style="text-align: center; margin-top: 20px; font-size: 18px; color: var(--neon-blue);"></div>
-            </div>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <button id="certificateBtn" class="btn-primary" style="display: none;" onclick="showCertificate()">
-                    <i class="fas fa-award"></i> ОТРИМАТИ СЕРТИФІКАТ
-                </button>
-            </div>
-        </div>
-
-        <!-- Екран 4: Сертифікат -->
-        <div id="screen4" class="game-screen">
-            <div class="certificate-container">
-                <div class="certificate-logo">🎖️</div>
-                <h1 class="certificate-title">СЕРТИФІКАТ БЕЗПЕКИ</h1>
-                <p class="certificate-subtitle">Державна служба України з надзвичайних ситуацій</p>
-                
-                <hr style="border: 2px solid gold; width: 80%; margin: 20px auto;">
-                
-                <p>Цим сертифікатом засвідчується, що</p>
-                <h2 class="certificate-name" id="certName">[ІМ'Я АГЕНТА]</h2>
-                <p>успішно пройшов(ла) курс підготовки</p>
-                <h3 style="color: #1a0b2e; margin: 20px 0;">"БЕЗПЕКА ПІД ЧАС НЕБЕЗПЕЧНИХ АТМОСФЕРНИХ ЯВИЩ"</h3>
-                
-                <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin: 30px 0;">
-                    <div>
-                        <h4>ОСВОЄНІ ТЕМИ:</h4>
-                        <ul style="text-align: left; padding-left: 20px;">
-                            <li>Град: утворення та небезпека</li>
-                            <li>Гроза: блискавки та грім</li>
-                            <li>Ожеледь та ожеледиця</li>
-                            <li>Хуртовина</li>
-                            <li>Туман та обмежена видимість</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>НАБУТІ НАВИЧКИ:</h4>
-                        <ul style="text-align: left; padding-left: 20px;">
-                            <li>Аналіз погодних умов</li>
-                            <li>Правила безпечної поведінки</li>
-                            <li>Прийняття рішень у небезпеці</li>
-                            <li>Командна робота</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <hr style="border: 1px solid #ccc; width: 80%; margin: 20px auto;">
-                
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 15px; margin-top: 30px;">
-                    <div>
-                        <p>Дата видачі</p>
-                        <h4 id="certDate">07.02.2026</h4>
-                    </div>
-                    <div>
-                        <p>Ідентифікатор</p>
-                        <h4 id="certId">ATMOS-#<span id="certNumber">0001</span></h4>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                    <button class="btn-primary no-print" onclick="printCertificate()" style="margin: 10px auto;">
-                        <i class="fas fa-print"></i> ДРУКУВАТИ СЕРТИФІКАТ
-                    </button>
-                    <button class="btn-secondary no-print" onclick="finishProject()" style="margin: 10px auto;">
-                        <i class="fas fa-trophy"></i> ЗАВЕРШИТИ ПРОЄКТ
-                    </button>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;" class="no-print">
-                <p><i class="fas fa-share-alt"></i> Поділися своїм досягненням з друзями!</p>
-                <button class="btn-secondary" onclick="shareCertificate()" style="margin: 5px; width: auto; display: inline-block;">
-                    <i class="fab fa-facebook"></i> Facebook
-                </button>
-                <button class="btn-secondary" onclick="shareCertificate()" style="margin: 5px; width: auto; display: inline-block;">
-                    <i class="fab fa-instagram"></i> Instagram
-                </button>
-            </div>
-        </div>
+        <div class="game-title">🌱 АГЕНТ ҐРУНТИК 🌱</div>
+        <div style="font-size:0.8rem;">Пригоди в підземеллі родючості</div>
     </div>
 
-    <!-- Toast контейнер -->
-    <div id="toast-message" style="display: none;"></div>
-
-    <!-- Кнопка ДСНС (ліворуч внизу) -->
-    <a href="https://dsns.gov.ua/abetka-bezpeki-1/nebezpeki-prirodnogo-xarakteru" target="_blank" class="dsns-fixed-btn no-print" id="dsnsBtn" style="display: none;">
-        <i class="fas fa-shield-alt"></i> Абетка безпеки ДСНС
-    </a>
-
-    <!-- Кнопки допомоги (праворуч) -->
-    <div class="fixed-buttons no-print">
-        <button class="btn-secondary" onclick="restartProject()" style="margin: 5px;">
-            <i class="fas fa-redo"></i> Почати знову
-        </button>
+    <!-- Прогрес -->
+    <div class="progress-fun">
+        <div class="step-badge active" data-step="1">🆔 1. Хто ти?</div>
+        <div class="step-badge" data-step="2">🕵️ 2. Місії</div>
+        <div class="step-badge" data-step="3">🔓 3. Код</div>
+        <div class="step-badge" data-step="4">🏆 4. Нагорода</div>
     </div>
 
-    <script>
-        // ============ КОНФІГУРАЦІЯ ПРОЄКТУ ============
-        const PROJECT_CONFIG = {
-            missions: [
-                {
-                    id: "hail",
-                    title: "ГРАДОВА АТАКА",
-                    icon: "⛈️",
-                    theory: "Град — це щільні шаруваті кульки льоду розміром від горошини до голубиного яйця. Він буває лише влітку під час сильних гроз, коли верхівки хмар піднімаються на велику висоту (мал. 199). Град може вкривати землю шаром 20-30 см, знищувати посіви та пошкоджувати будівлі.",
-                    question: "Що найбезпечніше робити під час сильного граду?",
-                    options: [
-                        "Швидко бігти додому, прикриваючи голову сумкою",
-                        "Сховатися під міцним дахом або в будівлі",
-                        "Стояти під високим деревом, щоб захиститися"
-                    ],
-                    correct: 1,
-                    codeChar: "А",
-                    color: "#FF9500"
-                },
-                {
-                    id: "thunder",
-                    title: "ГРОЗОВА ТРИВОГА",
-                    icon: "⚡",
-                    theory: "Гроза часто супроводжується градом та сильним вітром. Блискавка — це електричний розряд, який може вдарити у високі предмети. Град утворюється в грозових хмарах, коли краплі води багаторазово піднімаються вгору і замерзають (мал. 199).",
-                    question: "Що категорично НЕ МОЖНА робити під час грози?",
-                    options: [
-                        "Вимкнути електроприлади з розетки",
-                        "Ховатися під високим деревом",
-                        "Залишатися в автомобілі"
-                    ],
-                    correct: 1,
-                    codeChar: "Г",
-                    color: "#C77DFF"
-                },
-                {
-                    id: "ice",
-                    title: "ОЖЕЛЕДЕВА ТЕРИТОРІЯ",
-                    icon: "🧊",
-                    theory: "Ожеледь — це шар льоду на поверхнях (дороги, дерева, проводи), що утворюється при замерзанні дощу або туману. Ожеледиця — це слизький стан поверхні. Іній — це кристали льоду, що утворюються в холодну пору замість роси (мал. 202).",
-                    question: "Як безпечно пересуватися під час ожеледиці?",
-                    options: [
-                        "Бігти, щоб швидше пройти небезпечну ділянку",
-                        "Дрібними кроками, не відриваючи п'яти від землі",
-                        "Стрибати, щоб зберігати рівновагу"
-                    ],
-                    correct: 1,
-                    codeChar: "Е",
-                    color: "#00FFFF"
-                },
-                {
-                    id: "blizzard",
-                    title: "ХУРТОВИНА",
-                    icon: "❄️🌪️",
-                    theory: "Хуртовина — це сильний вітер зі снігом, який погіршує видимість, заметає дороги, ускладнює рух транспорту. Під час хуртовини легко загубитися, переохолодитися, отримати обмороження.",
-                    question: "Що небезпечно робити під час сильної хуртовини?",
-                    options: [
-                        "Виходити на вулицю без потреби",
-                        "Стежити за повідомленнями ДСНС",
-                        "Утеплити вікна та двері вдома"
-                    ],
-                    correct: 0,
-                    codeChar: "Н",
-                    color: "#39FF14"
-                },
-                {
-                    id: "fog",
-                    title: "ТУМАННА ОПЕРАЦІЯ",
-                    icon: "🌫️",
-                    theory: "Туман — це хмара, що лежить на земній поверхні. Він утворюється, коли тепле вологе повітря стикається з охолодженою землею (мал. 200). Туман значно зменшує видимість, чим утруднює роботу транспорту. Якщо видимість 1-10 км — це серпанок, а в містах з пилом — смог.",
-                    question: "Що обов'язково робити під час руху в густому тумані?",
-                    options: [
-                        "Їхати швидше, щоб швидше виїхати з туману",
-                        "Увімкнути протитуманні фари та знизити швидкість",
-                        "Сигналити, щоб інші водії чули вас"
-                    ],
-                    correct: 1,
-                    codeChar: "Т",
-                    color: "#FF4081"
-                }
-            ],
-            
-            finalCode: "АГЕНТ",
-            secretMessage: "БЕЗПЕКА",
-            
-            scoring: {
-                correctAnswer: 2,
-                allMissionsBonus: 5,
-                timeBonus: 3,
-                totalMax: 18
-            }
-        };
+    <!-- ЕКРАН 1: ІДЕНТИФІКАЦІЯ -->
+    <div id="screen1" class="screen active">
+        <div style="text-align: center;">
+            <i class="fas fa-child" style="font-size: 55px; color:#ff9900;"></i>
+            <p>Привіт, майбутній дослідник ґрунту! Як тебе звати?</p>
+            <input type="text" id="playerName" placeholder="Напиши своє ім'я" style="width:100%; padding:14px; border-radius: 40px; border:2px solid #f0bc6e; margin:10px 0; text-align:center;">
+        </div>
+        <div class="soil-scanner">
+            <p>🌾 Натисни на землю, щоб її дослідити 🌾</p>
+            <div class="dig-area" id="digButton">
+                <i class="fas fa-hand-peace" style="font-size: 50px; color:#ffd966;"></i>
+            </div>
+            <div id="scanFeedback">👆 Копай! Знайдеш скарб</div>
+        </div>
+        <button class="candy-btn" id="startAdventureBtn" style="display:none;">🚀 Почати пригоду!</button>
+    </div>
 
-        // ============ ЗМІННІ ГРИ ============
-        let gameState = {
-            agentName: "",
-            currentScreen: 1,
-            completedMissions: [],
-            collectedCode: ["_", "_", "_", "_", "_"],
-            score: 0,
-            startTime: null,
-            certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString(),
-            decodingCompleted: false  // нове поле
-        };
+    <!-- ЕКРАН 2: МІСІЇ -->
+    <div id="screen2" class="screen">
+        <div class="stats">
+            <span>⭐ Бали: <span id="scoreSpan">0</span></span>
+            <span>⏱️ Бонус-час: <span id="timerSpan">10:00</span></span>
+        </div>
+        <div class="code-display" id="codeDisplay">⚫⚫⚫⚫⚫</div>
+        <div class="missions-grid" id="missionsList"></div>
+        <div id="missionPopup" style="display:none;">
+            <div style="background:#fff0ce; border-radius: 45px; padding:20px;">
+                <h3 id="popupTitle"></h3>
+                <p id="popupTheory"></p>
+                <div id="popupOptions"></div>
+                <button class="candy-btn candy-btn-small" onclick="closeMissionPopup()">⬅ Назад</button>
+            </div>
+        </div>
+        <button id="openDecoderBtn" class="candy-btn" style="display:none;">🔓 Відкрити дешифратор</button>
+    </div>
 
-        // ============ ІНІЦІАЛІЗАЦІЯ ============
-        document.addEventListener('DOMContentLoaded', function() {
-            initProject();
-            loadProgress();
-            renderMissions();
-            updateProgressTracker();
-            updateScoreDisplay();
-            document.getElementById('maxScore').textContent = PROJECT_CONFIG.scoring.totalMax;
+    <!-- ЕКРАН 3: ДЕШИФРАТОР -->
+    <div id="screen3" class="screen">
+        <div style="background:#fae7bc; border-radius: 40px; padding:20px;">
+            <p>🧪 Введи 5-літерний код, який зібрав із місій:</p>
+            <input type="text" id="codeInput" maxlength="5" style="width:100%; text-align:center; font-size:2rem; letter-spacing:10px; border-radius: 40px; border:3px solid #ffb347; background:#fff5e6;" placeholder="?????">
+            <button class="candy-btn" id="decodeBtn">✨ Розшифрувати!</button>
+            <div id="decodingResult" style="margin-top:20px; text-align:center; font-size:1.5rem; font-weight:bold;"></div>
+        </div>
+        <button id="showCertBtn" class="candy-btn" style="display:none; margin-top:20px;">🎉 Отримати сертифікат</button>
+    </div>
+
+    <!-- ЕКРАН 4: СЕРТИФІКАТ + НАГОРОДА -->
+    <div id="screen4" class="screen">
+        <div class="certificate" id="certificateBox">
+            <i class="fas fa-trophy" style="font-size: 60px; color:#ffb347;"></i>
+            <h2>СЕРТИФІКАТ ҐРУНТОЗНАВЦЯ</h2>
+            <p>Видано <strong id="certName"></strong></p>
+            <p>за успішне проходження гри <br>«Агент Ґрунтик: Таємниці родючості»</p>
+            <div id="rewardMessage" class="reward-message" style="display:none;">
+                🎁 ПРИЙДИ ЗА ВИНАГОРОДОЮ В КАБІНЕТ ГЕОГРАФІЇ!<br>
+                Шукай 🌟 Олесю Олександрівну 🌟
+            </div>
+        </div>
+        <button class="candy-btn candy-btn-small" id="downloadPNG">📸 Зберегти сертифікат (PNG)</button>
+        <button class="candy-btn candy-btn-small" id="finishGameBtn">🏁 Завершити гру</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    // ------------------- ІГРОВІ ДАНІ -------------------
+    const missions = [
+        { id: 1, title: "🌾 Родючість - суперсила", icon: "🌽", theory: "Ґрунт живить рослини завдяки гумусу. Головна властивість ґрунту — родючість!", question: "Що робить ґрунт родючим?", options: ["Глина", "Гумус", "Пісок"], correct: 1, codeChar: "Ґ" },
+        { id: 2, title: "🔬 Склад ґрунту", icon: "🧪", theory: "У ґрунті є повітря, вода, пісок, глина і найважливіший гумус!", question: "Що надає ґрунту темного кольору?", options: ["Гумус", "Вода", "Повітря"], correct: 0, codeChar: "Р" },
+        { id: 3, title: "⏳ Утворення ґрунту", icon: "🦠", theory: "1 см ґрунту утворюється за 50-200 років! Допомагають бактерії та черв'яки.", question: "Скільки років треба для 1 см ґрунту?", options: ["10 днів", "50-200 років", "1000 років"], correct: 1, codeChar: "У" },
+        { id: 4, title: "🛡️ Захист ґрунту", icon: "🌳", theory: "Щоб ґрунт не зникав, садять лісосмуги, сіють різні рослини по черзі.", question: "Що допомагає боротися з вітровою ерозією?", options: ["Лісосмуги", "Спалювання листя", "Багато води"], correct: 0, codeChar: "Н" },
+        { id: 5, title: "🇺🇦 Чорноземи України", icon: "🌻", theory: "Українські чорноземи – найродючіші у світі! Докучаєв їх досліджував.", question: "Який ґрунт найкращий у світі?", options: ["Піщаний", "Чорнозем", "Болотний"], correct: 1, codeChar: "Т" }
+    ];
+    const FINAL_CODE = "ҐРУНТ";
+    const SECRET_WORD = "РОДЮЧІСТЬ";
+
+    let game = {
+        name: "",
+        completed: [false, false, false, false, false],
+        collected: ["_", "_", "_", "_", "_"],
+        score: 0,
+        startTime: null,
+        timerInterval: null,
+        decoderUnlocked: false,
+        certNumber: Math.floor(Math.random()*9000+1000)
+    };
+
+    // DOM елементи
+    let currentScreen = 1;
+    function showScreen(n) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen${n}`).classList.add('active');
+        document.querySelectorAll('.step-badge').forEach((b, idx) => {
+            if(idx+1 === n) b.classList.add('active');
+            else b.classList.remove('active');
         });
-
-        function initProject() {
-            gameState.startTime = Date.now();
-            
-            // Перевіряємо, чи не був проєкт вже завершений
-            const completed = localStorage.getItem('project_completed');
-            if (completed === 'true') {
-                loadCertificateData();
-                showScreen(4);
-                document.getElementById('dsnsBtn').style.display = 'flex';
-            }
+        currentScreen = n;
+        if(n === 2 && !game.startTime) startTimer();
+        if(n === 4) {
+            document.getElementById('certName').innerText = game.name.toUpperCase();
+            document.getElementById('rewardMessage').style.display = 'block';
         }
+    }
 
-        function loadProgress() {
-            const saved = localStorage.getItem('safe_agent_progress');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    // Оновлюємо тільки існуючі поля, зберігаючи нові
-                    gameState = { ...gameState, ...parsed };
-                    
-                    // Якщо немає поля decodingCompleted, додаємо
-                    if (gameState.decodingCompleted === undefined) {
-                        gameState.decodingCompleted = false;
-                    }
-                    
-                    updateCodeDisplay();
-                    updateScoreDisplay();
-                    
-                    if (gameState.completedMissions.length === PROJECT_CONFIG.missions.length) {
-                        document.getElementById('decoderBtn').style.display = 'block';
-                    }
-                    
-                    if (gameState.agentName) {
-                        document.getElementById('agentName').value = gameState.agentName;
-                    }
-                } catch (e) {
-                    console.log("Помилка завантаження прогресу");
-                }
-            }
+    function updateUI() {
+        // оновити код-дисплей
+        let codeDiv = document.getElementById('codeDisplay');
+        if(codeDiv) codeDiv.innerText = game.collected.join('');
+        document.getElementById('scoreSpan').innerText = game.score;
+        // перемалювати місії
+        renderMissions();
+        if(game.completed.every(v=>v===true)) {
+            document.getElementById('openDecoderBtn').style.display = 'block';
         }
+    }
 
-        function saveProgress() {
-            localStorage.setItem('safe_agent_progress', JSON.stringify(gameState));
-        }
-
-        // ============ TOAST ПОВІДОМЛЕННЯ ============
-        function showToast(message, isSuccess = true) {
-            const toast = document.getElementById('toast-message');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            toast.style.borderLeftColor = isSuccess ? 'var(--neon-green)' : '#ff5555';
-            toast.style.opacity = '1';
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 300);
-            }, 2500);
-        }
-
-        // ============ ЕКРАНИ ТА НАВІГАЦІЯ ============
-        function showScreen(screenNumber) {
-            document.querySelectorAll('.game-screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            document.getElementById(`screen${screenNumber}`).classList.add('active');
-            gameState.currentScreen = screenNumber;
-            
-            updateProgressTracker();
-            
-            if (screenNumber === 3) {
-                // Якщо дешифрування вже виконано, показуємо результат
-                if (gameState.decodingCompleted) {
-                    document.getElementById('decodeResult').textContent = PROJECT_CONFIG.secretMessage;
-                    document.getElementById('decodingMessage').innerHTML = `
-                        <p style="color: var(--neon-green); font-size: 24px;">
-                            <i class="fas fa-check-circle"></i> ДЕШИФРУВАНО!
-                        </p>
-                        <p>Секретне повідомлення: <strong>${PROJECT_CONFIG.secretMessage}</strong></p>
-                        <p>Ти став справжнім агентом безпеки!</p>
-                    `;
-                    document.getElementById('certificateBtn').style.display = 'block';
-                }
-            }
-            
-            if (screenNumber === 4) {
-                loadCertificateData();
-                document.getElementById('dsnsBtn').style.display = 'flex';
-            } else {
-                document.getElementById('dsnsBtn').style.display = 'none';
-            }
-        }
-
-        function updateProgressTracker() {
-            const steps = document.querySelectorAll('.progress-step');
-            steps.forEach((step, index) => {
-                step.classList.remove('active');
-                if (index + 1 === gameState.currentScreen) {
-                    step.classList.add('active');
-                }
-            });
-        }
-
-        function updateScoreDisplay() {
-            document.getElementById('scoreValue').textContent = gameState.score;
-        }
-
-        // ============ СКАНУВАННЯ ============
-        function startBioScan() {
-            const nameInput = document.getElementById('agentName').value.trim();
-            if (!nameInput) {
-                showToast("Агенте, спочатку введіть своє ім'я!", false);
-                return;
-            }
-            
-            gameState.agentName = nameInput;
-            document.getElementById('scanStatus').innerHTML = '<p><i class="fas fa-sync-alt fa-spin"></i> СКАНУВАННЯ...</p>';
-            document.getElementById('scanLine').style.display = 'block';
-            document.getElementById('fingerIcon').style.opacity = '0.7';
-            
-            setTimeout(() => {
-                document.getElementById('scanLine').style.display = 'none';
-                document.getElementById('scanStatus').innerHTML = `
-                    <p style="color: var(--neon-green);">
-                        <i class="fas fa-check-circle"></i> ІДЕНТИФІКАЦІЮ ПРОЙДЕНО
-                    </p>
-                    <p>Агент: <strong>${gameState.agentName}</strong></p>
-                `;
-                document.getElementById('startMissionBtn').style.display = 'block';
-                saveProgress();
-                showToast("Ідентифікацію успішно пройдено!");
-            }, 2000);
-        }
-
-        function startMission() {
-            showScreen(2);
-        }
-
-        // ============ МІСІЇ ============
-        function renderMissions() {
-            const container = document.getElementById('missionsContainer');
-            container.innerHTML = '';
-            
-            PROJECT_CONFIG.missions.forEach((mission, index) => {
-                const isCompleted = gameState.completedMissions.includes(mission.id);
-                const card = document.createElement('div');
-                card.className = `mission-card ${isCompleted ? 'completed' : ''}`;
-                card.style.borderColor = mission.color;
-                card.onclick = () => openMission(mission.id);
-                
-                card.innerHTML = `
-                    <div class="mission-icon">${mission.icon}</div>
-                    <h3>${mission.title}</h3>
-                    <p>${mission.question.substring(0, 40)}...</p>
-                    ${isCompleted ? 
-                        `<div class="mission-code">${mission.codeChar}</div>` : 
-                        `<div style="color: #666; margin-top: 10px;"><i class="fas fa-lock"></i> Завдання</div>`
-                    }
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-
-        function openMission(missionId) {
-            const mission = PROJECT_CONFIG.missions.find(m => m.id === missionId);
-            if (!mission) return;
-            
-            if (gameState.completedMissions.includes(missionId)) {
-                showToast("Цю місію вже виконано! Символ отримано.", true);
-                return;
-            }
-            
-            document.getElementById('missionsContainer').style.display = 'none';
-            document.getElementById('missionDetail').style.display = 'block';
-            
-            document.getElementById('missionTitle').textContent = mission.title;
-            document.getElementById('missionTheory').textContent = mission.theory;
-            document.getElementById('missionQuestion').textContent = mission.question;
-            
-            const optionsContainer = document.getElementById('missionOptions');
-            optionsContainer.innerHTML = '';
-            
-            mission.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'btn-secondary';
-                button.style.width = '100%';
-                button.style.padding = '15px';
-                button.style.textAlign = 'left';
-                button.style.marginBottom = '10px';
-                button.innerHTML = `<span style="font-weight: bold; margin-right: 10px;">${String.fromCharCode(65 + index)}.</span> ${option}`;
-                button.onclick = () => checkAnswer(missionId, index);
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        function closeMission() {
-            document.getElementById('missionsContainer').style.display = 'grid';
-            document.getElementById('missionDetail').style.display = 'none';
-        }
-
-        function checkAnswer(missionId, selectedIndex) {
-            const mission = PROJECT_CONFIG.missions.find(m => m.id === missionId);
-            const isCorrect = selectedIndex === mission.correct;
-            
-            if (isCorrect) {
-                if (!gameState.completedMissions.includes(missionId)) {
-                    gameState.completedMissions.push(missionId);
-                    
-                    const missionIndex = PROJECT_CONFIG.missions.findIndex(m => m.id === missionId);
-                    gameState.collectedCode[missionIndex] = mission.codeChar;
-                    
-                    gameState.score += PROJECT_CONFIG.scoring.correctAnswer;
-                    
-                    updateCodeDisplay();
-                    updateScoreDisplay();
-                    renderMissions();
-                    saveProgress();
-                    
-                    if (gameState.completedMissions.length === PROJECT_CONFIG.missions.length) {
-                        document.getElementById('decoderBtn').style.display = 'block';
-                        gameState.score += PROJECT_CONFIG.scoring.allMissionsBonus;
-                        
-                        const timeSpent = (Date.now() - gameState.startTime) / 1000 / 60;
-                        if (timeSpent < 15) {
-                            gameState.score += PROJECT_CONFIG.scoring.timeBonus;
-                        }
-                        updateScoreDisplay();
-                        saveProgress();
-                        showToast(`Вітаю! Всі місії виконано! +${PROJECT_CONFIG.scoring.allMissionsBonus} балів!`, true);
-                    }
-                    
-                    showToast(`Правильно! Отримано символ: ${mission.codeChar} +2 бали`, true);
-                }
-                closeMission();
-            } else {
-                showToast("Помилка! Спробуй ще раз, уважно прочитай теоретичну частину.", false);
-            }
-        }
-
-        function updateCodeDisplay() {
-            for (let i = 0; i < 5; i++) {
-                const char = gameState.collectedCode[i];
-                const element = document.getElementById(`codeChar${i + 1}`);
-                
-                if (char === '_') {
-                    element.textContent = '⚫';
-                    element.style.color = '#666';
-                    element.style.textShadow = 'none';
-                } else {
-                    element.textContent = char;
-                    element.style.color = PROJECT_CONFIG.missions[i].color;
-                    element.style.textShadow = `0 0 10px ${PROJECT_CONFIG.missions[i].color}`;
-                }
-            }
-        }
-
-        // ============ ДЕШИФРУВАННЯ ============
-        function openDecoder() {
-            showScreen(3);
-        }
-
-        function startDecoding() {
-            const inputCode = document.getElementById('finalCode').value.toUpperCase().trim();
-            
-            if (inputCode.length !== 5) {
-                showToast("Код має містити рівно 5 символів!", false);
-                return;
-            }
-            
-            if (inputCode !== PROJECT_CONFIG.finalCode) {
-                showToast("Код невірний! Спробуйте ще раз. Підказка: це слово з 5 літер, яке означає вас — АГЕНТ.", false);
-                return;
-            }
-            
-            const decodeResult = document.getElementById('decodeResult');
-            const decodeMessage = document.getElementById('decodingMessage');
-            
-            decodeMessage.innerHTML = '<p><i class="fas fa-sync-alt fa-spin"></i> ЗАПУСК КВАНТОВОГО АНАЛІЗУ...</p>';
-            
-            let steps = 0;
-            const interval = setInterval(() => {
-                let randomChars = '';
-                for (let i = 0; i < 7; i++) {
-                    randomChars += String.fromCharCode(65 + Math.floor(Math.random() * 26));
-                }
-                decodeResult.textContent = randomChars;
-                
-                steps++;
-                
-                if (steps === 10) {
-                    clearInterval(interval);
-                    decodeResult.textContent = PROJECT_CONFIG.secretMessage;
-                    decodeMessage.innerHTML = `
-                        <p style="color: var(--neon-green); font-size: 24px;">
-                            <i class="fas fa-check-circle"></i> ДЕШИФРУВАНО!
-                        </p>
-                        <p>Секретне повідомлення: <strong>${PROJECT_CONFIG.secretMessage}</strong></p>
-                        <p>Ти став справжнім агентом безпеки!</p>
-                    `;
-                    
-                    document.getElementById('certificateBtn').style.display = 'block';
-                    gameState.decodingCompleted = true;
-                    saveProgress();
-                    showToast("Дешифрування успішне! Тепер можна отримати сертифікат.", true);
-                }
-            }, 300);
-        }
-
-        // ============ СЕРТИФІКАТ ============
-        function showCertificate() {
-            showScreen(4);
-        }
-
-        function loadCertificateData() {
-            const name = gameState.agentName?.trim() || "Агент";
-            document.getElementById('certName').textContent = name.toUpperCase();
-            document.getElementById('certNumber').textContent = gameState.certificateNumber;
-            
-            const now = new Date();
-            const dateString = now.toLocaleDateString('uk-UA', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            document.getElementById('certDate').textContent = dateString;
-        }
-
-        function printCertificate() {
-            window.print();
-        }
-
-        function shareCertificate() {
-            const text = `Я, ${gameState.agentName || 'Агент'}, став(ла) агентом безпеки ДСНС України! Пройшов(ла) курс "Атмосферні опади: небезпечні явища" та отримав(ла) сертифікат №${gameState.certificateNumber}. Будьте безпечні!`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Сертифікат агента безпеки',
-                    text: text,
-                    url: window.location.href
-                }).catch(() => {
-                    // fallback
-                    prompt('Скопіюйте текст для поширення:', text);
-                });
-            } else {
-                prompt('Скопіюйте текст для поширення:', text);
-            }
-        }
-
-        // ============ ЗАВЕРШЕННЯ ПРОЄКТУ ============
-        function finishProject() {
-            localStorage.setItem('project_score', gameState.score);
-            localStorage.setItem('project_completed', 'true');
-            localStorage.setItem('project_agent', gameState.agentName);
-            
-            const finalScore = Math.min(gameState.score, PROJECT_CONFIG.scoring.totalMax);
-            const message = `
-                🎉 ПРОЄКТ УСПІШНО ЗАВЕРШЕНО!
-                
-                Твій результат: ${finalScore}/${PROJECT_CONFIG.scoring.totalMax} балів
-                
-                Ти став(ла) справжнім агентом безпеки!
-                Знаєш правила поведінки під час:
-                ✓ Граду
-                ✓ Грози
-                ✓ Ожеледиці
-                ✓ Хуртовини
-                ✓ Туману
-                
-                Бажаємо безпечних подорожей!
+    function renderMissions() {
+        const container = document.getElementById('missionsList');
+        if(!container) return;
+        container.innerHTML = '';
+        missions.forEach((m, idx) => {
+            let done = game.completed[idx];
+            let card = document.createElement('div');
+            card.className = `mission-card ${done ? 'completed' : ''}`;
+            card.innerHTML = `
+                <div class="mission-icon">${m.icon}</div>
+                <div><strong>${m.title}</strong></div>
+                ${done ? `<div class="code-symbol">${m.codeChar}</div>` : '<div>🔒 завдання</div>'}
             `;
-            
-            showToast("Проєкт завершено! Вітаємо!", true);
-            setTimeout(() => {
-                alert(message);
-                // Повертаємо до початку, замість переходу на index.html
-                restartProject();
-            }, 500);
-        }
+            card.onclick = () => { if(!done) openMission(idx); else showToast("Вже виконано! 🎉"); };
+            container.appendChild(card);
+        });
+    }
 
-        // ============ РЕСТАРТ ============
-        function restartProject() {
-            if (confirm("Точно хочеш почати проєкт з початку? Весь прогрес буде втрачено.")) {
-                localStorage.removeItem('safe_agent_progress');
-                localStorage.removeItem('project_completed');
-                
-                // Скидання gameState
-                gameState = {
-                    agentName: "",
-                    currentScreen: 1,
-                    completedMissions: [],
-                    collectedCode: ["_", "_", "_", "_", "_"],
-                    score: 0,
-                    startTime: Date.now(),
-                    certificateNumber: Math.floor(Math.random() * 9000 + 1000).toString(),
-                    decodingCompleted: false
-                };
-                
-                // Скидання UI першого екрану
-                document.getElementById('agentName').value = '';
-                document.getElementById('startMissionBtn').style.display = 'none';
-                document.getElementById('scanStatus').innerHTML = '<p><i class="fas fa-clock"></i> Очікування сканування...</p>';
-                document.getElementById('fingerIcon').style.opacity = '0.3';
-                
-                // Скидання дешифратора
-                document.getElementById('finalCode').value = '';
-                document.getElementById('decodeResult').textContent = '';
-                document.getElementById('decodingMessage').innerHTML = '';
-                document.getElementById('certificateBtn').style.display = 'none';
-                
-                renderMissions();
-                updateCodeDisplay();
-                updateScoreDisplay();
-                showScreen(1);
-                document.getElementById('dsnsBtn').style.display = 'none';
-                
-                showToast("Прогрес скинуто. Почнімо знову!", true);
+    function openMission(idx) {
+        let m = missions[idx];
+        document.getElementById('missionsList').style.display = 'none';
+        document.getElementById('missionPopup').style.display = 'block';
+        document.getElementById('popupTitle').innerHTML = m.title;
+        document.getElementById('popupTheory').innerHTML = m.theory;
+        let optsDiv = document.getElementById('popupOptions');
+        optsDiv.innerHTML = '';
+        m.options.forEach((opt, optIdx) => {
+            let btn = document.createElement('button');
+            btn.className = 'candy-btn candy-btn-small';
+            btn.style.margin = '5px';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(idx, optIdx, m.correct, m.codeChar);
+            optsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(mIdx, selected, correct, codeChar) {
+        if(selected === correct) {
+            if(!game.completed[mIdx]) {
+                game.completed[mIdx] = true;
+                game.collected[mIdx] = codeChar;
+                game.score += 2;
+                updateUI();
+                showToast(`✅ Правильно! +2 бали. Отримано символ ${codeChar}`);
+                closeMissionPopup();
+                if(game.completed.every(v=>v===true)) {
+                    showToast("🎉 Ура! Всі місії виконано! Тепер відкривай дешифратор.");
+                    document.getElementById('openDecoderBtn').style.display = 'block';
+                }
+                saveGame();
             }
+        } else {
+            showToast("❌ Ой, не правильно! Прочитай теорію ще раз.", false);
         }
-    </script>
+    }
+
+    function closeMissionPopup() {
+        document.getElementById('missionsList').style.display = 'grid';
+        document.getElementById('missionPopup').style.display = 'none';
+    }
+
+    function startTimer() {
+        if(game.startTime) return;
+        game.startTime = Date.now();
+        if(game.timerInterval) clearInterval(game.timerInterval);
+        game.timerInterval = setInterval(() => {
+            if(currentScreen !== 2) return;
+            let elapsed = Math.floor((Date.now() - game.startTime) / 1000);
+            let remaining = Math.max(0, 600 - elapsed);
+            let minutes = Math.floor(remaining/60);
+            let secs = remaining%60;
+            document.getElementById('timerSpan').innerText = `${minutes}:${secs<10?'0'+secs:secs}`;
+            if(remaining === 0 && game.completed.some(v=>!v)) {
+                showToast("Час вийшов! Але ти все одно молодець, продовжуй!");
+            }
+        }, 1000);
+    }
+
+    function showToast(msg, isGood=true) {
+        let toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.backgroundColor = isGood ? '#6f9e3f' : '#d9534f';
+        toast.style.color = 'white';
+        toast.style.padding = '12px 24px';
+        toast.style.borderRadius = '50px';
+        toast.style.fontWeight = 'bold';
+        toast.style.zIndex = '9999';
+        toast.style.boxShadow = '0 5px 15px black';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    function saveGame() {
+        localStorage.setItem('soilKidGame', JSON.stringify({
+            name: game.name, completed: game.completed, collected: game.collected,
+            score: game.score, startTime: game.startTime, decoderUnlocked: game.decoderUnlocked
+        }));
+    }
+
+    function loadGame() {
+        let saved = localStorage.getItem('soilKidGame');
+        if(saved) {
+            let data = JSON.parse(saved);
+            game.name = data.name;
+            game.completed = data.completed;
+            game.collected = data.collected;
+            game.score = data.score;
+            game.startTime = data.startTime;
+            game.decoderUnlocked = data.decoderUnlocked;
+            document.getElementById('playerName').value = game.name;
+            updateUI();
+            if(game.completed.every(v=>v===true)) document.getElementById('openDecoderBtn').style.display = 'block';
+            if(game.decoderUnlocked) showScreen(3);
+            else showScreen(2);
+        }
+    }
+
+    // Сканування (копаємо)
+    let digCount = 0;
+    document.getElementById('digButton')?.addEventListener('click', () => {
+        let name = document.getElementById('playerName').value.trim();
+        if(name === "") { showToast("Спочатку напиши своє ім'я!", false); return; }
+        game.name = name;
+        digCount++;
+        let feedback = document.getElementById('scanFeedback');
+        if(digCount === 1) feedback.innerHTML = "🌱 О! Ти знайшов дощового черв'яка! +1 бал";
+        else if(digCount === 2) feedback.innerHTML = "💎 У ґрунті є гумус! Це перегній, дуже поживний! +1 бал";
+        else {
+            feedback.innerHTML = "🎉 Ти готовий до місій! Натискай «Почати пригоду»!";
+            document.getElementById('startAdventureBtn').style.display = 'block';
+            game.score += 2;
+            updateUI();
+        }
+        saveGame();
+    });
+
+    document.getElementById('startAdventureBtn')?.addEventListener('click', () => {
+        if(game.name === "") { showToast("Введи ім'я!", false); return; }
+        showScreen(2);
+        saveGame();
+    });
+
+    document.getElementById('openDecoderBtn')?.addEventListener('click', () => {
+        showScreen(3);
+    });
+
+    document.getElementById('decodeBtn')?.addEventListener('click', () => {
+        let code = document.getElementById('codeInput').value.toUpperCase().trim();
+        if(code !== FINAL_CODE) {
+            showToast("Неправильний код! Збери всі літери з місій: Ґ, Р, У, Н, Т", false);
+            return;
+        }
+        // конфетті
+        canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+        document.getElementById('decodingResult').innerHTML = `🔓 Розшифровано! Секретне слово: <span style="color:#b45116;">${SECRET_WORD}</span> 🎉`;
+        document.getElementById('showCertBtn').style.display = 'block';
+        game.decoderUnlocked = true;
+        saveGame();
+    });
+
+    document.getElementById('showCertBtn')?.addEventListener('click', () => {
+        showScreen(4);
+        canvasConfetti({ particleCount: 300, spread: 100, origin: { y: 0.5 } });
+    });
+
+    document.getElementById('downloadPNG')?.addEventListener('click', () => {
+        let element = document.getElementById('certificateBox');
+        html2canvas(element, { scale: 2, backgroundColor: '#fef9e6' }).then(canvas => {
+            let link = document.createElement('a');
+            link.download = `cert_${game.name}_soil.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            showToast("Сертифікат збережено! 🖼️");
+        });
+    });
+
+    document.getElementById('finishGameBtn')?.addEventListener('click', () => {
+        canvasConfetti({ particleCount: 500, spread: 120, origin: { y: 0.5 } });
+        alert(`🎉 Вітаю, ${game.name}! Ти справжній агент ґрунтів! 🎉\n\n✨ НЕ ЗАБУДЬ: ПРИЙДИ ЗА ВИНАГОРОДОЮ В КАБІНЕТ ГЕОГРАФІЇ. ШУКАЙ ОЛЕСЮ ОЛЕКСАНДРІВНУ ✨`);
+        localStorage.removeItem('soilKidGame');
+    });
+
+    // додатковий свайп-горизонти (на першому екрані)
+    function addSwipeHorizons() {
+        let swipeHtml = `
+            <div class="swipe-card">
+                <p>👉 Гортай, щоб дізнатись про шари ґрунту! 👈</p>
+                <div class="horizon-scroll">
+                    <div class="horizon-item">🌾 Гумусовий шар - тут найбільше поживних речовин, живе безліч черв'яків!</div>
+                    <div class="horizon-item">🧱 Елювіальний шар - з нього вимиваються мінерали</div>
+                    <div class="horizon-item">🧫 Ілювіальний шар - тут накопичуються солі</div>
+                    <div class="horizon-item">⛰ Материнська порода - тверда скеля, основа</div>
+                </div>
+            </div>`;
+        document.getElementById('screen1').insertAdjacentHTML('beforeend', swipeHtml);
+    }
+    addSwipeHorizons();
+
+    // Відновлення прогресу
+    loadGame();
+    if(game.name) document.getElementById('playerName').value = game.name;
+    updateUI();
+    if(game.completed.every(v=>v===true)) document.getElementById('openDecoderBtn').style.display = 'block';
+</script>
 </body>
 </html>
